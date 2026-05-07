@@ -3,6 +3,10 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #185FA5;
+  --project-badge: #E6F1FB;
+  --sidebar-surface: var(--color-background-secondary);
+  --active-indicator: #378ADD;
 }
 
 @theme inline {
