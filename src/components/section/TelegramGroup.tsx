@@ -1,8 +1,9 @@
 import { useGetTeleGroup } from "@/hooks/useTelegramGroup"
+import TableSkeleton from "../ui/tableSkeleton"
 
 export default function TelegramGroupPage() {
     const { data, error, isLoading } = useGetTeleGroup()
-    console.log(data)
+
     return (
         <div className="w-full p-5 space-y-4">
             <header className="p-2">
@@ -22,39 +23,21 @@ export default function TelegramGroupPage() {
                                 className="pl-8 pr-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-600 placeholder:text-slate-400 outline-none focus:border-blue-400 focus:bg-white transition-colors w-56"
                             />
                         </div>
-                        <button className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 transition-colors text-white text-xs font-medium px-3 py-1.5 rounded-lg">
+                        <button className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 transition-colors text-white text-xs font-medium px-3 py-2 rounded-lg">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
                             Add new group
                         </button>
                     </div>
                     <div className="grid grid-cols-[48px_1fr_2fr_80px] px-4 py-2 bg-slate-100 border-b border-slate-200">
                         <div className="text-xs font-semibold text-slate-600 uppercase tracking-wide">No</div>
-                        <div className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Project name</div>
+                        <div className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Group name</div>
                         <div className="text-xs font-semibold text-slate-600 uppercase tracking-wide">URL</div>
                         <div className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Actions</div>
                     </div>
 
                     <div className="flex flex-col">
                         {isLoading ? (
-                            <div className="grid grid-cols-[60px_1fr_700px_40px] bg-white shadow-md items-start px-3 py-3 border-b border-slate-200 hover:bg-gray-50 transition-colors">
-                                <div>
-                                    <div className="p-2 animate-pulse w-full flex items-center">
-                                        <div className=" bg-gray-300 w-6 h-6 rounded-xl"></div>
-                                    </div>
-                                </div>
-
-                                <div className="animate-pulse space-y-1">
-                                    <div className="w-full rounded-xl h-4 bg-gray-300"></div>
-                                    <div className="w-1/2 rounded-xl h-4 bg-gray-300"></div>
-                                </div>
-                                <div className="pl-4 animate-pulse">
-                                    <div className="w-1/2 rounded-xl h-4 bg-gray-300"></div>
-                                </div>
-
-                                <div className="animate-pulse">
-                                    <div className="w-full rounded-md h-10 bg-gray-300"></div>
-                                </div>
-                            </div>
+                            <TableSkeleton totalSkeleton={5} />
                         ) : error ? (
                             <div className="grid grid-cols-[60px_1fr_40px] bg-white items-start px-3 py-3 border-b border-slate-200 hover:bg-gray-50 transition-colors">
                                 <div>
@@ -80,8 +63,7 @@ export default function TelegramGroupPage() {
                         ) : (
                             data?.map((item, index) => (
                                 <div key={index} className="grid grid-cols-[48px_1fr_2fr_80px] bg-white items-start px-3 py-3 border-b border-slate-200 hover:bg-gray-50 transition-colors">
-                                    <div className="text-sm font-medium text-slate-600">{index + 1}</div>
-
+                                        <div className="text-sm font-medium text-slate-600 bg-gray-200 p-2 rounded-md max-w-1/2">{index + 1}</div>
                                     <div className="flex flex-col">
                                         <p className="text-sm font-semibold text-slate-800 uppercase">{item.title}</p>
                                         <span className="text-xs font-medium text-slate-600 py-0.5 rounded-full w-fit">

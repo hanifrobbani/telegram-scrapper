@@ -1,4 +1,12 @@
+'use client'
+import { useState } from "react"
+
 export default function MainPage() {
+    const [tableScrapResult, setTableScrapResult] = useState<string>('newest')
+
+    const handleChangeTableScrapResult = (data: string) => {
+        setTableScrapResult(data)
+    }
     return (
         <div className="w-full p-5 space-y-4">
             <header className="p-2">
@@ -91,71 +99,92 @@ export default function MainPage() {
                 </div>
 
                 <section className="py-5">
-                    <header className="p-2">
-                        <h1 className="text-xl font-semibold">Scrape Result</h1>
-                        <p className="text-sm text-slate-500">Final scrape resutl & filter by new or updated project</p>
+                    <header className="p-2 flex justify-between">
+                        <div className="">
+                            <h1 className="text-xl font-semibold">Scrape Result</h1>
+                            <p className="text-sm text-slate-500">Final scrape resutl & filter by new or updated project</p>
+                        </div>
+                        <div className="flex items-center bg-gray-200 p-1 rounded-xl w-fit">
+                            <button onClick={() => handleChangeTableScrapResult('newest')}
+                                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'newest'
+                                        ? 'bg-white shadow text-blue-600 font-semibold' : 'text-slate-500 hover:text-slate-700'}`}>
+                                Newest
+                            </button>
+
+                            <button onClick={() => handleChangeTableScrapResult('updated')}
+                                className={` px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'updated'
+                                        ? 'bg-white shadow text-blue-600 font-semibold'
+                                        : 'text-slate-500 hover:text-slate-700'}`}>
+                                Updated
+                            </button>
+                        </div>
                     </header>
                     <div className="flex gap-2 w-full flex-col">
-                        <div className="flex flex-col gap-1 w-full border border-slate-200 rounded-xl shadow bg-white">
-                            <header className="flex justify-between py-4 px-2 items-center">
-                                <div className="flex items-center gap-2">
-                                    <div className="bg-green-200 p-2 rounded-full text-green-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-folder-open"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 19l2.757 -7.351a1 1 0 0 1 .936 -.649h12.307a1 1 0 0 1 .986 1.164l-.996 5.211a2 2 0 0 1 -1.964 1.625h-14.026a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2h4l3 3h7a2 2 0 0 1 2 2v2" /></svg>
-                                    </div>
-                                    <div className="">
-                                        <h1 className="font-semibold">New Project</h1>
-                                        <p className="text-sm text-slate-600">All the newest project</p>
+                        {tableScrapResult == 'newest' ?
+                            (
+                                <div className="flex flex-col gap-1 w-full border border-slate-200 rounded-xl shadow bg-white">
+                                    <header className="flex justify-between py-4 px-2 items-center">
+                                        <div className="flex items-center gap-2">
+                                            <div className="bg-green-200 p-2 rounded-full text-green-600">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-folder-open"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 19l2.757 -7.351a1 1 0 0 1 .936 -.649h12.307a1 1 0 0 1 .986 1.164l-.996 5.211a2 2 0 0 1 -1.964 1.625h-14.026a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2h4l3 3h7a2 2 0 0 1 2 2v2" /></svg>
+                                            </div>
+                                            <div className="">
+                                                <h1 className="font-semibold">New Project</h1>
+                                                <p className="text-sm text-slate-600">All the newest project</p>
+                                            </div>
+                                        </div>
+                                        <p className="text-slate-400 text-sm">90 items</p>
+                                    </header>
+                                    <div className="flex flex-col">
+                                        <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
+                                            <div className="flex gap-4 items-start">
+                                                <div className="p-2 bg-gray-200 rounded-md">
+                                                    <p className="text-slate-700 text-sm font-semibold">1</p>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <p className="font-semibold">New project</p>
+                                                    <p className="text-slate-600 text-sm">Description about the project</p>
+                                                </div>
+                                            </div>
+                                            <div className="text-gray-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M9 6l6 6l-6 6" /></svg>
+                                            </div>
+                                        </li>
                                     </div>
                                 </div>
-                                <p className="text-slate-400 text-sm">90 items</p>
-                            </header>
-                            <div className="flex flex-col">
-                                <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
-                                    <div className="flex gap-4 items-start">
-                                        <div className="p-2 bg-gray-200 rounded-md">
-                                            <p className="text-slate-700 text-sm font-semibold">1</p>
+                            ) : (
+                                <div className="flex flex-col gap-1 w-full border border-slate-200 rounded-xl shadow bg-white">
+                                    <header className="flex justify-between py-4 px-2 items-center">
+                                        <div className="flex items-center gap-2">
+                                            <div className="bg-orange-200 p-2 rounded-full text-orange-600">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-rotate-clockwise"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4.05 11a8 8 0 1 1 .5 4m-.5 5v-5h5" /></svg>
+                                            </div>
+                                            <div className="">
+                                                <h1 className="font-semibold">Updated Project</h1>
+                                                <p className="text-sm text-slate-600">All the updated project</p>
+                                            </div>
                                         </div>
-                                        <div className="flex flex-col">
-                                            <p className="font-semibold">New project</p>
-                                            <p className="text-slate-600 text-sm">Description about the project</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M9 6l6 6l-6 6" /></svg>
-                                    </div>
-                                </li>
-                            </div>
-                        </div>
-                        <div className="flex flex-col gap-1 w-full border border-slate-200 rounded-xl shadow bg-white">
-                            <header className="flex justify-between py-4 px-2 items-center">
-                                <div className="flex items-center gap-2">
-                                    <div className="bg-orange-200 p-2 rounded-full text-orange-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-rotate-clockwise"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4.05 11a8 8 0 1 1 .5 4m-.5 5v-5h5" /></svg>
-                                    </div>
-                                    <div className="">
-                                        <h1 className="font-semibold">Updated Project</h1>
-                                        <p className="text-sm text-slate-600">All the updated project</p>
+                                        <p className="text-slate-400 text-sm">90 items</p>
+                                    </header>
+                                    <div className="flex flex-col">
+                                        <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
+                                            <div className="flex gap-4 items-start">
+                                                <div className="p-2 bg-gray-200 rounded-md">
+                                                    <p className="text-slate-700 text-sm font-semibold">1</p>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <p className="font-semibold">New project</p>
+                                                    <p className="text-slate-600 text-sm">Description about the project</p>
+                                                </div>
+                                            </div>
+                                            <div className="text-gray-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M9 6l6 6l-6 6" /></svg>
+                                            </div>
+                                        </li>
                                     </div>
                                 </div>
-                                <p className="text-slate-400 text-sm">90 items</p>
-                            </header>
-                            <div className="flex flex-col">
-                                <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
-                                    <div className="flex gap-4 items-start">
-                                        <div className="p-2 bg-gray-200 rounded-md">
-                                            <p className="text-slate-700 text-sm font-semibold">1</p>
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <p className="font-semibold">New project</p>
-                                            <p className="text-slate-600 text-sm">Description about the project</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M9 6l6 6l-6 6" /></svg>
-                                    </div>
-                                </li>
-                            </div>
-                        </div>
+                            )
+                        }
                     </div>
                 </section>
             </main>
