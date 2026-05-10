@@ -1,3 +1,12 @@
+export interface telegramProjectRespond{
+    message: string;
+    status: number
+    data: {
+        url_project: string;
+        project_name: string;
+        type: string;
+    }[]
+}
 export interface formTelegramProject{
     url_project: string;
     project_name: string;

@@ -152,7 +152,7 @@ export default function TelegramGroupPage() {
                 isOpen={toaster.isOpen}
                 onClose={() => setToaster(prev => ({ ...prev, isOpen: false }))}
                 autoClose={true}
-            duration={3000}
+                duration={3000}
             />
         </div>
     )

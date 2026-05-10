@@ -23,8 +23,16 @@ export async function POST(request: Request) {
     const supabase = createClient()
     const formData: formTelegramGroup = await request.json()
 
-    if(formData.title == "" || formData.url_group == ""){
-        return NextResponse.json({message: "Data cannot be empty", status: 500})
+    const requiredFields = [
+        formData.title,
+        formData.url_group
+    ]
+
+    if (requiredFields.some(field => !field?.trim())) {
+        return NextResponse.json({
+            message: "Data cannot be empty",
+            status: 400
+        })
     }
     
     try {

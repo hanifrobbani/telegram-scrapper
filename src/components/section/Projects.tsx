@@ -3,11 +3,34 @@ import TableSkeleton from "../ui/tableSkeleton"
 import { useState } from "react"
 import Modal from "../ui/modalDialog"
 import Button from "../ui/Button"
-import { IconPlus, IconMoodConfuzedFilled, IconRotate } from "@tabler/icons-react"
+import { IconPlus, IconMoodConfuzedFilled, IconRotate, IconLink, IconLabelFilled, IconCategory } from "@tabler/icons-react"
+import { useProjectMutation } from "@/hooks/useProject"
+import Toaster from "../ui/modalToaster"
+import Input from "../ui/Input"
+import Select from "../ui/SelectOption"
+import { formTelegramProject } from "@/types/telegram.type"
 
 export default function ProjectPage() {
-    const { data, error, isLoading } = useGetProject()
+    const { mutate, error, isPending, toaster, setToaster } = useProjectMutation()
+    const { data, isError, isLoading } = useGetProject()
     const [openModal, setOpenModal] = useState(false)
+    const [form, setForm] = useState<formTelegramProject>({ url_project: '', project_name: '', type: 'airdrop' })
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        setForm(prev => ({
+            ...prev,
+            [e.target.name]: e.target.value
+        }))
+    }
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        mutate(form)
+
+        if (!isPending || isError) {
+            setOpenModal(false)
+        }
+    }
 
     return (
         <div className="w-full p-5 space-y-4">
@@ -46,7 +69,7 @@ export default function ProjectPage() {
                     <div className="flex flex-col">
                         {isLoading ? (
                             <TableSkeleton totalSkeleton={5} />
-                        ) : error ? (
+                        ) : isError ? (
                             <div className="flex justify-center bg-white items-start px-3 py-3 border-b border-slate-200 hover:bg-gray-50 transition-colors">
                                 <div className="flex flex-col items-center py-10 text-slate-600 gap-2">
                                     <IconMoodConfuzedFilled size={40} />
@@ -99,23 +122,65 @@ export default function ProjectPage() {
 
             <Modal isOpen={openModal} onClose={() => setOpenModal(false)} title="Add new Project">
                 <div className="border-t border-slate-400">
-                    <form action="" className="p-4 space-y-2">
+                    <form onSubmit={handleSubmit} className="p-4 space-y-2">
                         <div className="">
                             <label htmlFor="" className="text-sm text-slate-600">Project Name</label>
-                            <input type="text" className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 bg-white  text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-600" placeholder="Enter your project name" />
+                            <Input
+                                name="project_name"
+                                placeholder="Name of the project"
+                                icon={<IconLabelFilled size={16} />}
+                                value={form.project_name}
+                                onChange={handleChange}
+                            />
                         </div>
-                        <div className="">
-                            <label htmlFor="" className="text-sm text-slate-600">Project URL</label>
-                            <input type="text" className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 bg-white  text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-600" placeholder="Enter your project url" />
+                        <div className="flex gap-2 w-full justify-between">
+                            <div className="w-full">
+                                <label htmlFor="" className="text-sm text-slate-600">Project URL</label>
+                                <Input
+                                    name="url_project"
+                                    placeholder="URL of the Project"
+                                    icon={<IconLink size={16} />}
+                                    value={form.url_project}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="w-full">
+                                <label htmlFor="" className="text-sm text-slate-600">Project Type</label>
+                                <Select value={form.type} icon={<IconCategory size={16} />} name="type" onChange={handleChange}>
+                                    <option value="">Select Type</option>
+                                    <option value="airdrop">Airdrop</option>
+                                    <option value="trade">Trade</option>
+                                    <option value="nft">NFTs</option>
+                                </Select>
+                            </div>
                         </div>
 
                         <div className="flex justify-end gap-2 mt-5">
-                            <button type="button" className="text-sm text-slate-600 bg-white rounded-md px-4 py-1.5 cursor-pointer hover:bg-slate-100 border border-slate-400" onClick={() => setOpenModal(false)} >Cancel</button>
-                            <button className="text-sm text-white bg-blue-600 rounded-md px-4 py-1.5 cursor-pointer hover:bg-blue-500">Save</button>
+                            <Button
+                                type="button"
+                                label="Cancel"
+                                variant="secondary"
+                                onClick={() => setOpenModal(false)}
+                            />
+                            <Button
+                                type="submit"
+                                label="Save"
+                                variant="primary"
+                                loadingType={isPending}
+                            />
                         </div>
                     </form>
                 </div>
             </Modal>
+
+            <Toaster
+                type={toaster.type}
+                message={toaster.message}
+                isOpen={toaster.isOpen}
+                onClose={() => setToaster(prev => ({ ...prev, isOpen: false }))}
+                autoClose={true}
+                duration={3000}
+            />
         </div>
     )
 }
