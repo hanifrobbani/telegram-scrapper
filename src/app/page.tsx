@@ -12,17 +12,19 @@ export default function Home() {
     setPage(data)
   }
 
+  const pages: Record<string, React.ReactNode> = {
+    scrapper: <MainPage />,
+    project: <ProjectPage />,
+    telegram: <TelegramGroupPage />
+  }
+
   return (
     <div className="flex bg-slate-50 font-sans h-screen overflow-hidden">
       <Sidebar setPageUser={handleChangePage} />
 
       <div className="flex-1 overflow-y-auto">
-        {page == 'scrapper' ? (
-        <MainPage />
-      ) : page == 'project' ? (
-        <ProjectPage />
-      ) : (<TelegramGroupPage />)}
+        {pages[page] || <MainPage />}
       </div>
     </div>
-  );
+  )
 }

@@ -4,8 +4,9 @@ import TableSkeleton from "../ui/tableSkeleton"
 import Modal from "../ui/modalDialog"
 import { useState } from "react"
 import Button from "../ui/Button"
-import { IconPlus, IconMoodConfuzedFilled, IconRotate } from "@tabler/icons-react"
+import { IconPlus, IconMoodConfuzedFilled, IconRotate, IconLabelFilled, IconLink } from "@tabler/icons-react"
 import Toaster from "../ui/modalToaster"
+import Input from "../ui/Input"
 
 export default function TelegramGroupPage() {
     const { mutate, error, isPending, toaster, setToaster } = useTelegramGroupMutation()
@@ -121,11 +122,23 @@ export default function TelegramGroupPage() {
                     <form onSubmit={handleSubmit} className="p-4 space-y-2">
                         <div className="">
                             <label htmlFor="" className="text-sm text-slate-600">Group Name</label>
-                            <input type="text" name="title" value={form.title} onChange={handleChange} placeholder="Enter Telegram Group Name" className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 bg-white  text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-600" />
+                            <Input
+                                name="title"
+                                placeholder="Name of the Group"
+                                icon={<IconLabelFilled size={16} />}
+                                value={form.title}
+                                onChange={handleChange}
+                            />
                         </div>
                         <div className="">
                             <label htmlFor="" className="text-sm text-slate-600">Group URL</label>
-                            <input type="text" name="url_group" value={form.url_group} onChange={handleChange} placeholder="Enter Telegram Group URL" className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 bg-white  text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-600" />
+                            <Input
+                                name="ur_group"
+                                placeholder="URL Group"
+                                icon={<IconLink size={16} />}
+                                value={form.url_group}
+                                onChange={handleChange}
+                            />
                         </div>
 
                         <div className="flex justify-end gap-2 mt-5">
