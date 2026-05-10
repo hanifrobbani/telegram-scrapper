@@ -19,16 +19,21 @@ export async function GET() {
     }
 }
 
-export async function POST(formData: formTelegramGroup) {
+export async function POST(request: Request) {
     const supabase = createClient()
+    const formData: formTelegramGroup = await request.json()
 
+    if(formData.title == "" || formData.url_group == ""){
+        return NextResponse.json({message: "Data cannot be empty", status: 500})
+    }
+    
     try {
-        const { data, error } = await supabase.from('telegram_groups').insert([formData]).select()
+        const { data, error } = await supabase.from('telegram_groups').insert(formData).select()
         if (error) {
             return NextResponse.json({ error: error, status: 500 })
         }
 
-        return NextResponse.json({ data: data, status: 201 })
+        return NextResponse.json({ data: data, status: 201, message: "Success add new group" })
     } catch (error) {
         return NextResponse.json({ error: error, status: 500 })
     }

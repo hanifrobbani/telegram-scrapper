@@ -1,8 +1,13 @@
 import { useGetProject } from "@/hooks/useProject"
 import TableSkeleton from "../ui/tableSkeleton"
+import { useState } from "react"
+import Modal from "../ui/modalDialog"
+import Button from "../ui/Button"
+import { IconPlus, IconMoodConfuzedFilled, IconRotate } from "@tabler/icons-react"
 
 export default function ProjectPage() {
     const { data, error, isLoading } = useGetProject()
+    const [openModal, setOpenModal] = useState(false)
 
     return (
         <div className="w-full p-5 space-y-4">
@@ -23,10 +28,13 @@ export default function ProjectPage() {
                                 className="pl-8 pr-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-600 placeholder:text-slate-400 outline-none focus:border-blue-400 focus:bg-white transition-colors w-56"
                             />
                         </div>
-                        <button className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 transition-colors text-white text-xs font-medium px-3 py-2 rounded-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-                            Add new project
-                        </button>
+                        <Button
+                            type="button"
+                            label="Add new Project"
+                            variant="primary"
+                            icon={<IconPlus size={16} />}
+                            onClick={() => setOpenModal(true)}
+                        />
                     </div>
                     <div className="grid grid-cols-[48px_1fr_2fr_80px] px-4 py-2 bg-slate-100 border-b border-slate-200">
                         <div className="text-xs font-semibold text-slate-600 uppercase tracking-wide">No</div>
@@ -39,31 +47,23 @@ export default function ProjectPage() {
                         {isLoading ? (
                             <TableSkeleton totalSkeleton={5} />
                         ) : error ? (
-                            <div className="grid grid-cols-[60px_1fr_40px] bg-white items-start px-3 py-3 border-b border-slate-200 hover:bg-gray-50 transition-colors">
-                                <div>
-                                    <div className="p-2 bg-gray-200 rounded-md text-sm font-semibold w-fit">
-                                        1
-                                    </div>
+                            <div className="flex justify-center bg-white items-start px-3 py-3 border-b border-slate-200 hover:bg-gray-50 transition-colors">
+                                <div className="flex flex-col items-center py-10 text-slate-600 gap-2">
+                                    <IconMoodConfuzedFilled size={40} />
+                                    <h1 className="text-sm">Something went wrong, please try again!</h1>
+                                    <Button
+                                        type="button"
+                                        label=""
+                                        variant="secondary"
+                                        iconOnly={true}
+                                        icon={<IconRotate size={20} />}
+                                    />
                                 </div>
-
-                                <div>
-                                    <p className="font-semibold">ada error bos</p>
-                                    <p className="text-slate-600 text-sm">
-                                        Error
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="font-semibold">ada error bos</p>
-                                </div>
-
-                                <button className="text-gray-400 flex items-center justify-center cursor-pointer hover:text-gray-600">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="icon icon-tabler icons-tabler-filled icon-tabler-edit"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M8 7a1 1 0 0 1 -1 1h-1a1 1 0 0 0 -1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1 -1v-1a1 1 0 0 1 2 0v1a3 3 0 0 1 -3 3h-9a3 3 0 0 1 -3 -3v-9a3 3 0 0 1 3 -3h1a1 1 0 0 1 1 1" /><path d="M14.596 5.011l4.392 4.392l-6.28 6.303a1 1 0 0 1 -.708 .294h-3a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 .294 -.708zm6.496 -2.103a3.097 3.097 0 0 1 .165 4.203l-.164 .18l-.693 .694l-4.387 -4.387l.695 -.69a3.1 3.1 0 0 1 4.384 0" /></svg>
-                                </button>
                             </div>
                         ) : (
                             data?.map((item, index) => (
                                 <div key={index} className="grid grid-cols-[48px_1fr_2fr_80px] bg-white items-start px-3 py-3 border-b border-slate-200 hover:bg-gray-50 transition-colors">
-                                        <div className="text-sm font-medium text-slate-600 bg-gray-200 p-2 rounded-md max-w-1/2">{index + 1}</div>
+                                    <div className="text-sm font-medium text-slate-600 bg-gray-200 p-2 rounded-md max-w-1/2">{index + 1}</div>
 
                                     <div className="flex flex-col">
                                         <p className="text-sm font-semibold text-slate-800 uppercase">{item.project_name}</p>
@@ -80,7 +80,7 @@ export default function ProjectPage() {
 
                                     <div className="flex items-center gap-1">
                                         <button className="p-2 rounded-md border border-red-200 bg-red-50 text-red-500 hover:bg-red-100 hover:border-red-300 transition-colors cursor-pointer"
-                                        aria-label="Delete">
+                                            aria-label="Delete">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
                                         </button>
                                         <button className="p-2 rounded-md border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100 hover:border-slate-300 transition-colors cursor-pointer"
@@ -96,6 +96,26 @@ export default function ProjectPage() {
                     </div>
                 </div>
             </main>
+
+            <Modal isOpen={openModal} onClose={() => setOpenModal(false)} title="Add new Project">
+                <div className="border-t border-slate-400">
+                    <form action="" className="p-4 space-y-2">
+                        <div className="">
+                            <label htmlFor="" className="text-sm text-slate-600">Project Name</label>
+                            <input type="text" className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 bg-white  text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-600" placeholder="Enter your project name" />
+                        </div>
+                        <div className="">
+                            <label htmlFor="" className="text-sm text-slate-600">Project URL</label>
+                            <input type="text" className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 bg-white  text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-600" placeholder="Enter your project url" />
+                        </div>
+
+                        <div className="flex justify-end gap-2 mt-5">
+                            <button type="button" className="text-sm text-slate-600 bg-white rounded-md px-4 py-1.5 cursor-pointer hover:bg-slate-100 border border-slate-400" onClick={() => setOpenModal(false)} >Cancel</button>
+                            <button className="text-sm text-white bg-blue-600 rounded-md px-4 py-1.5 cursor-pointer hover:bg-blue-500">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </Modal>
         </div>
     )
 }

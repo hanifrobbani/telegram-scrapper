@@ -19,9 +19,9 @@ export async function GET() {
     }
 }
 
-export async function POST(formData: formTelegramProject) {
+export async function POST(request: Request) {
     const supabase = createClient()
-
+    const formData: formTelegramProject = await request.json()
     try {
         const { data, error } = await supabase.from('projects').insert([formData]).select()
         if (error) {
