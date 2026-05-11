@@ -133,7 +133,7 @@ export default function TelegramGroupPage() {
                         <div className="">
                             <label htmlFor="" className="text-sm text-slate-600">Group URL</label>
                             <Input
-                                name="ur_group"
+                                name="url_group"
                                 placeholder="URL Group"
                                 icon={<IconLink size={16} />}
                                 value={form.url_group}

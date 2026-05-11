@@ -1,5 +1,6 @@
-'use client'
 import { useState } from "react"
+import Select from "./ui/SelectOption"
+import { IconCategory } from "@tabler/icons-react"
 
 export default function MainPage() {
     const [tableScrapResult, setTableScrapResult] = useState<string>('newest')
@@ -28,11 +29,9 @@ export default function MainPage() {
                     <form action="" className="flex gap-4">
                         <div className="flex flex-col gap-1 w-full">
                             <label htmlFor="" className="font-semibold text-sm text-slate-700">Telegram Group</label>
-                            <select name="" id="" className="bg-white text-slate-600 rounded-md px-4 py-2 outline-none border-2 border-gray-300">
-                                <option value="">nama</option>
-                                <option value="">nama</option>
-                                <option value="">nama</option>
-                            </select>
+                            <Select icon={<IconCategory size={16} />} name="url_group">
+                                <option value="">Select Group</option>
+                            </Select>
                         </div>
                         <div className="flex flex-col gap-1 w-full">
                             <label htmlFor="" className="font-semibold text-sm text-slate-700">From Date</label>
@@ -107,14 +106,14 @@ export default function MainPage() {
                         <div className="flex items-center bg-gray-200 p-1 rounded-xl w-fit">
                             <button onClick={() => handleChangeTableScrapResult('newest')}
                                 className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'newest'
-                                        ? 'bg-white shadow text-blue-600 font-semibold' : 'text-slate-500 hover:text-slate-700'}`}>
+                                    ? 'bg-white shadow text-blue-600 font-semibold' : 'text-slate-500 hover:text-slate-700'}`}>
                                 Newest
                             </button>
 
                             <button onClick={() => handleChangeTableScrapResult('updated')}
                                 className={` px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'updated'
-                                        ? 'bg-white shadow text-blue-600 font-semibold'
-                                        : 'text-slate-500 hover:text-slate-700'}`}>
+                                    ? 'bg-white shadow text-blue-600 font-semibold'
+                                    : 'text-slate-500 hover:text-slate-700'}`}>
                                 Updated
                             </button>
                         </div>

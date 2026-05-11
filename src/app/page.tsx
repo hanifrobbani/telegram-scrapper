@@ -1,7 +1,7 @@
 'use client'
 import MainPage from "@/components/main";
 import Sidebar from "@/components/sidebar";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ProjectPage from "@/components/section/Projects";
 import TelegramGroupPage from "@/components/section/TelegramGroup";
 
@@ -12,18 +12,16 @@ export default function Home() {
     setPage(data)
   }
 
-  const pages: Record<string, React.ReactNode> = {
-    scrapper: <MainPage />,
-    project: <ProjectPage />,
-    telegram: <TelegramGroupPage />
-  }
-
   return (
     <div className="flex bg-slate-50 font-sans h-screen overflow-hidden">
       <Sidebar setPageUser={handleChangePage} />
 
       <div className="flex-1 overflow-y-auto">
-        {pages[page] || <MainPage />}
+        {page == 'scrapper' ? (
+          <MainPage />
+        ) : page == 'project' ? (
+          <ProjectPage />
+        ) : (<TelegramGroupPage />)}
       </div>
     </div>
   )
