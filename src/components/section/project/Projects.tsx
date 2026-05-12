@@ -1,36 +1,46 @@
 import { useGetProject } from "@/hooks/useProject"
 import TableSkeleton from "../../ui/tableSkeleton"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Modal from "../../ui/modalDialog"
 import Button from "../../ui/Button"
-import { IconPlus, IconMoodConfuzedFilled, IconRotate, IconLink, IconLabelFilled, IconCategory } from "@tabler/icons-react"
-import { useProjectMutation } from "@/hooks/useProject"
+import { IconPlus, IconMoodConfuzedFilled, IconRotate } from "@tabler/icons-react"
 import Toaster from "../../ui/modalToaster"
-import Input from "../../ui/Input"
-import Select from "../../ui/SelectOption"
+import { ToasterType } from '@/types/toaster.type'
 import { formTelegramProject } from "@/types/telegram.type"
+import { ModalCreateData, ModalDeleteData, ModalUpdateData } from "./ModalProject"
 
 export default function ProjectPage() {
-    const { mutate, error, isPending, toaster, setToaster } = useProjectMutation()
     const { data, isError, isLoading } = useGetProject()
+    const [modalContent, setmodalContent] = useState<'create' | 'delete' | 'update' | null>(null)
+    const [itemSelected, setItemSelected] = useState<formTelegramProject | null>(null)
     const [openModal, setOpenModal] = useState(false)
-    const [form, setForm] = useState<formTelegramProject>({ url_project: '', project_name: '', type: 'airdrop' })
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setForm(prev => ({
-            ...prev,
-            [e.target.name]: e.target.value
-        }))
+    const [toaster, setToaster] = useState<ToasterType>({
+        isOpen: false,
+        type: "success",
+        message: ""
+    })
+    const handleOpenModal = (type: 'create' | 'delete' | 'update', itemSelected?: formTelegramProject) => {
+        setmodalContent(type)
+        setOpenModal(true)
+        if (itemSelected) setItemSelected(itemSelected)
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        mutate(form)
+    const handleToaster = (data: ToasterType) => {
+        setToaster(data)
+    }
 
-        if (!isPending || isError) {
-            setOpenModal(false)
+    const handleModalClose = (data: boolean) => {
+        setOpenModal(data)
+
+        setmodalContent(null)
+        setItemSelected(null)
+    }
+
+    useEffect(() => {
+        if (modalContent !== null) {
+            setOpenModal(true)
         }
-    }
+    }, [modalContent])
 
     return (
         <div className="w-full p-5 space-y-4">
@@ -56,7 +66,7 @@ export default function ProjectPage() {
                             label="Add new Project"
                             variant="primary"
                             icon={<IconPlus size={16} />}
-                            onClick={() => setOpenModal(true)}
+                            onClick={() => handleOpenModal('create')}
                         />
                     </div>
                     <div className="grid grid-cols-[48px_1fr_2fr_80px] px-4 py-2 bg-slate-100 border-b border-slate-200">
@@ -102,11 +112,11 @@ export default function ProjectPage() {
                                     </div>
 
                                     <div className="flex items-center gap-1">
-                                        <button className="p-2 rounded-md border border-red-200 bg-red-50 text-red-500 hover:bg-red-100 hover:border-red-300 transition-colors cursor-pointer"
+                                        <button onClick={() => handleOpenModal('delete', item)} className="p-2 rounded-md border border-red-200 bg-red-50 text-red-500 hover:bg-red-100 hover:border-red-300 transition-colors cursor-pointer"
                                             aria-label="Delete">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
                                         </button>
-                                        <button className="p-2 rounded-md border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100 hover:border-slate-300 transition-colors cursor-pointer"
+                                        <button onClick={() => handleOpenModal('update', item)} className="p-2 rounded-md border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100 hover:border-slate-300 transition-colors cursor-pointer"
                                             aria-label="Edit">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M8 7a1 1 0 0 1 -1 1h-1a1 1 0 0 0 -1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1 -1v-1a1 1 0 0 1 2 0v1a3 3 0 0 1 -3 3h-9a3 3 0 0 1 -3 -3v-9a3 3 0 0 1 3 -3h1a1 1 0 0 1 1 1" /><path d="M14.596 5.011l4.392 4.392l-6.28 6.303a1 1 0 0 1 -.708 .294h-3a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 .294 -.708zm6.496 -2.103a3.097 3.097 0 0 1 .165 4.203l-.164 .18l-.693 .694l-4.387 -4.387l.695 -.69a3.1 3.1 0 0 1 4.384 0" /></svg>
                                         </button>
@@ -115,62 +125,18 @@ export default function ProjectPage() {
                                 </div>
                             ))
                         )}
-
                     </div>
                 </div>
             </main>
 
-            <Modal isOpen={openModal} onClose={() => setOpenModal(false)} title="Add new Project">
-                <div className="border-t border-slate-400">
-                    <form onSubmit={handleSubmit} className="p-4 space-y-2">
-                        <div className="">
-                            <label htmlFor="" className="text-sm text-slate-600">Project Name</label>
-                            <Input
-                                name="project_name"
-                                placeholder="Name of the project"
-                                icon={<IconLabelFilled size={16} />}
-                                value={form.project_name}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="flex gap-2 w-full flex-col">
-                            <div className="w-full">
-                                <label htmlFor="" className="text-sm text-slate-600">Project URL</label>
-                                <Input
-                                    name="url_project"
-                                    placeholder="URL of the Project"
-                                    icon={<IconLink size={16} />}
-                                    value={form.url_project}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div className="w-full">
-                                <label htmlFor="" className="text-sm text-slate-600">Project Type</label>
-                                <Select value={form.type} icon={<IconCategory size={16} />} name="type" onChange={handleChange}>
-                                    <option value="">Select Type</option>
-                                    <option value="airdrop">Airdrop</option>
-                                    <option value="trade">Trade</option>
-                                    <option value="nft">NFTs</option>
-                                </Select>
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end gap-2 mt-5">
-                            <Button
-                                type="button"
-                                label="Cancel"
-                                variant="secondary"
-                                onClick={() => setOpenModal(false)}
-                            />
-                            <Button
-                                type="submit"
-                                label="Save"
-                                variant="primary"
-                                loadingType={isPending}
-                            />
-                        </div>
-                    </form>
-                </div>
+            <Modal isOpen={openModal} onClose={() => handleModalClose(false)} title={modalContent === 'create' ? "Add new Project" : modalContent === 'update' ? "Update Project" : "Delete Project?"}>
+                {modalContent == 'create' ? (
+                    <ModalCreateData ToasterData={handleToaster} ModalData={handleModalClose} />
+                ) : modalContent == 'update' ? (
+                    <ModalUpdateData ToasterData={handleToaster} ModalData={handleModalClose} ItemSelected={itemSelected} />
+                ) : (
+                    <ModalDeleteData ToasterData={handleToaster} ModalData={handleModalClose} ItemSelected={itemSelected} />
+                )}
             </Modal>
 
             <Toaster

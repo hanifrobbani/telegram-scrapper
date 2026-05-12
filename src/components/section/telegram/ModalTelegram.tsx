@@ -20,8 +20,10 @@ export const ModalCreateData = ({ ToasterData, ModalData }: TypeModalProps) => {
 
     useEffect(() => {
         if (toaster.isOpen) {
-            ToasterData(toaster)
             ModalData(false)
+            setTimeout(() => {
+                ToasterData(toaster)
+            }, 200)
         }
     }, [toaster])
 
@@ -86,8 +88,10 @@ export const ModalUpdateData = ({ ToasterData, ModalData, ItemSelected }: TypeMo
 
     useEffect(() => {
         if (toaster.isOpen) {
-            ToasterData(toaster)
             ModalData(false)
+            setTimeout(() => {
+                ToasterData(toaster)
+            }, 200)
         }
     }, [toaster])
 
@@ -152,8 +156,10 @@ export const ModalDeleteData = ({ ToasterData, ModalData, ItemSelected }: TypeMo
 
     useEffect(() => {
         if (toaster.isOpen) {
-            ToasterData(toaster)
             ModalData(false)
+            setTimeout(() => {
+                ToasterData(toaster)
+            }, 200)
         }
     }, [toaster])
 

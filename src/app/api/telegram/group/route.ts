@@ -51,6 +51,19 @@ export async function PUT(request: Request) {
     const supabase = createClient()
     const formData: formTelegramGroup = await request.json()
 
+    const requiredFields = [
+        formData.id,
+        formData.title,
+        formData.url_group
+    ]
+
+    if (requiredFields.some(field => !field?.trim())) {
+        return NextResponse.json({
+            message: "Data cannot be empty",
+            status: 400
+        })
+    }
+
     try {
         const { data, error } = await supabase.from('telegram_groups').update(formData).eq('id', formData.id)
         if (error) {
@@ -66,6 +79,17 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
     const supabase = createClient()
     const formData = await request.json()
+
+    const requiredFields = [
+        formData.id,
+    ]
+
+    if (requiredFields.some(field => !field?.trim())) {
+        return NextResponse.json({
+            message: "Data Id cannot be empty",
+            status: 400
+        })
+    }
 
     const { error } = await supabase.from('telegram_groups').delete().eq('id', formData.id)
 

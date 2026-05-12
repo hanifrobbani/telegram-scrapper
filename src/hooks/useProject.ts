@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { formTelegramProject, telegramProjectRespond } from "@/types/telegram.type"
 import { useState } from 'react'
+import { ToasterType } from '@/types/toaster.type'
 
 export const useGetProject = () => {
     const getProjects = useQuery<formTelegramProject[]>({
@@ -11,7 +12,7 @@ export const useGetProject = () => {
     return getProjects
 }
 
-export const useProjectMutation = () => {
+export const useAddProjectMutation = () => {
     const [toaster, setToaster] = useState<{
         isOpen: boolean
         type: "success" | "error"
@@ -38,4 +39,54 @@ export const useProjectMutation = () => {
     })
 
     return { mutate, isPending, isError, error, toaster, setToaster}
+}
+
+export const useUpdateProjectMutation = () => {
+    const [toaster, setToaster] = useState<ToasterType>({ isOpen: false, type: "success", message: "" })
+
+    const queryClient = useQueryClient()
+
+    const { mutate, isPending, isError, error } = useMutation<telegramProjectRespond, Error, formTelegramProject>({
+        mutationFn: (data) => fetch('/api/projects', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(res => res.json()),
+
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['projects'] })
+
+            setToaster({ isOpen: true, type: "success", message: data.message })
+        }, onError: (error) => {
+            setToaster({ isOpen: true, type: "error", message: error.message })
+        }
+
+    })
+
+    return { mutate, isPending, isError, error, toaster }
+}
+
+export const useDeleteProject = () => {
+    const [toaster, setToaster] = useState<ToasterType>({ isOpen: false, type: "success", message: "" })
+
+    const queryClient = useQueryClient()
+
+    const { mutate, isPending, isError, error } = useMutation<telegramProjectRespond, Error, formTelegramProject>({
+        mutationFn: (data) => fetch('/api/projects', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(res => res.json()),
+
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['projects'] })
+
+            setToaster({ isOpen: true, type: "success", message: data.message })
+        }, onError: (error) => {
+            setToaster({ isOpen: true, type: "error", message: error.message })
+        }
+
+    })
+    return { mutate, isPending, isError, error, toaster }
+
 }

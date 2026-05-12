@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     if (requiredFields.some(field => !field?.trim())) {
         return NextResponse.json({
             message: "Data cannot be empty",
-            status: 400
+            status: 400,
         })
     }
 
@@ -46,4 +46,58 @@ export async function POST(request: Request) {
     } catch (error) {
         return NextResponse.json({ error: error, status: 500 })
     }
+}
+
+export async function PUT(request: Request) {
+    const supabase = createClient()
+    const formData: formTelegramProject = await request.json()
+    
+    const requiredFields = [
+        formData.id,
+        formData.project_name,
+        formData.url_project,
+        formData.type
+    ]
+
+    if (requiredFields.some(field => !field?.trim())) {
+        return NextResponse.json({
+            message: "Data cannot be empty",
+            status: 400
+        })
+    }
+
+    try {
+        const { data, error } = await supabase.from('projects').update(formData).eq('id', formData.id)
+        if (error) {
+            return NextResponse.json({ error: error, status: 500 })
+        }
+
+        return NextResponse.json({ data: data, status: 201, message: "Success update project" })
+    } catch (error) {
+        return NextResponse.json({ error: error, status: 500 })
+    }
+}
+
+export async function DELETE(request: Request) {
+    const supabase = createClient()
+    const formData = await request.json()
+
+    const requiredFields = [
+        formData.id,
+    ]
+
+    if (requiredFields.some(field => !field?.trim())) {
+        return NextResponse.json({
+            message: "Data Id cannot be empty",
+            status: 400
+        })
+    }
+
+    const { error } = await supabase.from('projects').delete().eq('id', formData.id)
+
+    if (error) {
+        return NextResponse.json({ error: error, status: 500 })
+    }
+
+    return NextResponse.json({ status: 200, message: "Success delete project" })
 }

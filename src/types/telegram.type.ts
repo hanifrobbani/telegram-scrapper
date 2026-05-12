@@ -8,6 +8,7 @@ export interface telegramProjectRespond{
     }[]
 }
 export interface formTelegramProject{
+    id?: string;
     url_project: string;
     project_name: string;
     type: string;

@@ -32,11 +32,8 @@ export default function TelegramGroupPage() {
 
     const handleModalClose = (data: boolean) => {
         setOpenModal(data)
-
-        setTimeout(() => {
-            setmodalContent(null)
-            setItemSelected(null)
-        }, 200)
+        setmodalContent(null)
+        setItemSelected(null)
     }
 
     useEffect(() => {
