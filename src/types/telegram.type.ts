@@ -22,6 +22,7 @@ export interface telegramGroupRespond{
     }[]
 }
 export interface formTelegramGroup{
-    url_group: string;
+    id?: string;
     title: string;
+    url_group: string;
 }

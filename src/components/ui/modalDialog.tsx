@@ -61,7 +61,7 @@ export default function Modal({
                             ease: 'easeOut'
                         }}
                         onClick={(e) => e.stopPropagation()}
-                        className="relative w-full max-w-xl rounded-xl bg-white shadow-2xl border border-slate-200">
+                        className="relative w-full max-w-md rounded-xl bg-white shadow-2xl border border-slate-200">
                         {/* Header */}
                         <div className="flex items-center justify-between border-b border-slate-100 p-4">
                             <div>

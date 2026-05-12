@@ -2,8 +2,8 @@
 import MainPage from "@/components/main";
 import Sidebar from "@/components/sidebar";
 import { useState } from "react";
-import ProjectPage from "@/components/section/Projects";
-import TelegramGroupPage from "@/components/section/TelegramGroup";
+import ProjectPage from "@/components/section/project/Projects";
+import TelegramGroupPage from "@/components/section/telegram/TelegramGroup";
 
 export default function Home() {
   const [page, setPage] = useState<string>('scrapper')

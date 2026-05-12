@@ -34,7 +34,7 @@ export async function POST(request: Request) {
             status: 400
         })
     }
-    
+
     try {
         const { data, error } = await supabase.from('telegram_groups').insert(formData).select()
         if (error) {
@@ -45,4 +45,33 @@ export async function POST(request: Request) {
     } catch (error) {
         return NextResponse.json({ error: error, status: 500 })
     }
+}
+
+export async function PUT(request: Request) {
+    const supabase = createClient()
+    const formData: formTelegramGroup = await request.json()
+
+    try {
+        const { data, error } = await supabase.from('telegram_groups').update(formData).eq('id', formData.id)
+        if (error) {
+            return NextResponse.json({ error: error, status: 500 })
+        }
+
+        return NextResponse.json({ data: data, status: 200, message: "Success update group" })
+    } catch (error) {
+        return NextResponse.json({ error: error, status: 500 })
+    }
+}
+
+export async function DELETE(request: Request) {
+    const supabase = createClient()
+    const formData = await request.json()
+
+    const { error } = await supabase.from('telegram_groups').delete().eq('id', formData.id)
+
+    if (error) {
+        return NextResponse.json({ error: error, status: 500 })
+    }
+
+    return NextResponse.json({ status: 200, message: "Success delete telegram group" })
 }
