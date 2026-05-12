@@ -11,7 +11,7 @@ import { formTelegramGroup } from "@/types/telegram.type"
 
 export default function TelegramGroupPage() {
     const [modalContent, setmodalContent] = useState<'create' | 'delete' | 'update' | null>(null)
-    const [itemSelected, setItemSelected] = useState<formTelegramGroup>()
+    const [itemSelected, setItemSelected] = useState<formTelegramGroup | null>(null)
     const [openModal, setOpenModal] = useState(false)
     const { data, isError, isLoading } = useGetTeleGroup()
     const [toaster, setToaster] = useState<ToasterType>({
@@ -32,7 +32,11 @@ export default function TelegramGroupPage() {
 
     const handleModalClose = (data: boolean) => {
         setOpenModal(data)
-        setmodalContent(null)
+
+        setTimeout(() => {
+            setmodalContent(null)
+            setItemSelected(null)
+        }, 200)
     }
 
     useEffect(() => {

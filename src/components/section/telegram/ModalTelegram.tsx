@@ -10,7 +10,7 @@ import { ToasterType } from '@/types/toaster.type'
 type TypeModalProps = {
     ToasterData: (data: ToasterType) => void
     ModalData: (data: boolean) => void
-    ItemSelected?: formTelegramGroup
+    ItemSelected?: formTelegramGroup | null
 }
 
 export const ModalCreateData = ({ ToasterData, ModalData }: TypeModalProps) => {
@@ -164,7 +164,7 @@ export const ModalDeleteData = ({ ToasterData, ModalData, ItemSelected }: TypeMo
     return (
         <form onSubmit={handleSubmit} className="space-y-4 px-4 pb-4">
             <div className="text-slate-600 text-sm">
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta sequi quasi quisquam odio repellat officia iusto debitis nobis eum voluptate?</p>
+                <p>Are you sure want to delete this group? once it's deleted there's no going back, do it carefully!</p>
             </div>
             <div className="flex gap-2 justify-center">
                 <Button
