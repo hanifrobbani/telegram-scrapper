@@ -1,102 +1,107 @@
-import { getConnectedClient } from "./client"
-import { Api } from "telegram"
+import { Api } from "telegram";
+import { getConnectedClient } from "./client";
 
-export type MessageType = "new_project" | "updated_project"
+export type AirdropType = "new" | "update";
 
-export type ScrapedMessage = {
-  id: number
-  text: string
-  date: number
-  type: MessageType
-  replyToId: number | null
-  groupName: string
+export interface AirdropMessage {
+  id: number;
+  projectName: string;
+  type: AirdropType;
+  date: string;
+  text: string;
+  replyToId: number | null;
+  entities: Api.TypeMessageEntity[];
 }
 
-export type ScrapeResult = {
-  new_project: ScrapedMessage[]
-  updated_project: ScrapedMessage[]
-  totalFetched: number
-  group: string
-  dateFrom: Date
-  dateTo: Date
+interface ScrapeOptions {
+  channelUrl: string;
+  startDate: Date;
+  endDate: Date;
 }
 
-export type ScrapeParams = {
-  group: string      // username grup, contoh: "arbitrum"
-  dateFrom: Date
-  dateTo: Date
+function extractProjectName(
+  message: string,
+  entities: Api.TypeMessageEntity[]
+): string {
+  const firstLine = message.split("\n")[0].trim();
+
+  if (entities?.length) {
+    const firstLineLength = firstLine.length;
+    const boldInFirstLine = entities.find(
+      (e): e is Api.MessageEntityBold =>
+        e.className === "MessageEntityBold" && e.offset < firstLineLength
+    );
+    if (boldInFirstLine) {
+      return message
+        .substring(boldInFirstLine.offset, boldInFirstLine.offset + boldInFirstLine.length)
+        .trim();
+    }
+  }
+
+  const keywordMatch = message.match(
+    /^(?:update|new airdrop|new waitlist)\s+(.+)/i
+  );
+  if (keywordMatch) return keywordMatch[1].split("\n")[0].trim();
+
+  return firstLine;
 }
 
-export async function scrapeAnnouncements(
-  params: ScrapeParams
-): Promise<ScrapeResult> {
-  const { group, dateFrom, dateTo } = params
-  const client = await getConnectedClient()
+function parseChannelInput(channelUrl: string): string {
+  const match = channelUrl.match(/(?:t\.me\/|@)?([a-zA-Z0-9_]+)\/?$/);
+  if (!match) throw new Error("Format channel URL tidak valid");
+  return match[1];
+}
 
-  const entity = await client.getEntity(group)
+// Main scraper
+export async function scrapeChannel({
+  channelUrl,
+  startDate,
+  endDate,
+}: ScrapeOptions): Promise<AirdropMessage[]> {
+  const tg = await getConnectedClient();
+  const username = parseChannelInput(channelUrl);
 
-  const allMessages: ScrapedMessage[] = []
-  let offsetId = 0
-  let hasMore = true
+  const startTimestamp = Math.floor(startDate.getTime() / 1000);
+  const endTimestamp = Math.floor(endDate.getTime() / 1000);
 
-  // Loop batch karena Telegram limit 100 per request
-  while (hasMore) {
-    const batch = await client.getMessages(entity, {
-      limit: 100,
+  const results: AirdropMessage[] = [];
+  let offsetId = 0;
+  const BATCH_SIZE = 100;
+
+  while (true) {
+    const messages = await tg.getMessages(username, {
+      limit: BATCH_SIZE,
       offsetId,
-    })
+    });
 
-    if (batch.length === 0) break
+    if (!messages || messages.length === 0) break;
 
-    for (const msg of batch) {
-      // Skip jika bukan pesan teks biasa
-      if (!msg.message) continue
+    for (const msg of messages) {
+      if (!msg.message) continue;
 
-      const msgDate = new Date(msg.date * 1000)
+      const msgTimestamp = msg.date;
+      if (msgTimestamp > endTimestamp) continue;
 
-      // Sudah melewati batas bawah tanggal, stop loop
-      if (msgDate < dateFrom) {
-        hasMore = false
-        break
-      }
+      if (msgTimestamp < startTimestamp) return results;
 
-      // Skip jika di luar range atas
-      if (msgDate > dateTo) continue
+      const entities = (msg.entities ?? []) as Api.TypeMessageEntity[];
+      const projectName = extractProjectName(msg.message, entities);
+      const replyTo = msg.replyTo as Api.MessageReplyHeader | undefined;
 
-      const replyToId = msg.replyTo
-        ? (msg.replyTo as Api.MessageReplyHeader).replyToMsgId ?? null
-        : null
-
-      allMessages.push({
+      results.push({
         id: msg.id,
+        projectName,
+        type: replyTo ? "update" : "new",
+        date: new Date(msgTimestamp * 1000).toISOString(),
         text: msg.message,
-        date: msg.date,
-        type: replyToId ? "updated_project" : "new_project",
-        replyToId,
-        groupName: group,
-      })
+        replyToId: replyTo?.replyToMsgId ?? null,
+        entities,
+      });
     }
 
-    offsetId = batch[batch.length - 1].id
-    
-    if (batch.length < 100) break
-
-    await sleep(500)
+    offsetId = messages[messages.length - 1].id;
+    if (messages.length < BATCH_SIZE) break;
   }
 
-  // 2 list from updated project or new project
-  const result: ScrapeResult = {
-    new_project: allMessages.filter(m => m.type === "new_project"),
-    updated_project: allMessages.filter(m => m.type === "updated_project"),
-    totalFetched: allMessages.length,
-    group,
-    dateFrom,
-    dateTo,
-  }
-
-  return result
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms))
+  return results;
 }
