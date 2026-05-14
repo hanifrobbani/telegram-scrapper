@@ -26,7 +26,7 @@ export default function Input({
     className = "",
 }: InputProps) {
     return (
-        <div className={`flex items-center gap-2 w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 
+        <div className={`flex items-center gap-2 w-full rounded-md border border-slate-400 bg-white px-3 py-1.5 text-sm text-slate-700 
             focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent
             ${disabled ? "opacity-60 cursor-not-allowed bg-slate-50" : ""} ${className}`}>
             {icon && (
