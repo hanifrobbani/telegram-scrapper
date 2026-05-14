@@ -13,7 +13,7 @@ export default function TelegramGroupPage() {
     const [modalContent, setmodalContent] = useState<'create' | 'delete' | 'update' | null>(null)
     const [itemSelected, setItemSelected] = useState<formTelegramGroup | null>(null)
     const [openModal, setOpenModal] = useState(false)
-    const { data, isError, isLoading } = useGetTeleGroup()
+    const { telegramGroupData, isTelegramGroupError, isTelegramGroupLoading } = useGetTeleGroup()
     const [toaster, setToaster] = useState<ToasterType>({
         isOpen: false,
         type: "success",
@@ -77,9 +77,9 @@ export default function TelegramGroupPage() {
                     </div>
 
                     <div className="flex flex-col">
-                        {isLoading ? (
+                        {isTelegramGroupLoading ? (
                             <TableSkeleton totalSkeleton={5} />
-                        ) : isError ? (
+                        ) : isTelegramGroupError ? (
                             <div className="flex justify-center bg-white items-start px-3 py-3 border-b border-slate-200 hover:bg-gray-50 transition-colors">
                                 <div className="flex flex-col items-center py-10 text-slate-600 gap-2">
                                     <IconMoodConfuzedFilled size={40} />
@@ -94,7 +94,7 @@ export default function TelegramGroupPage() {
                                 </div>
                             </div>
                         ) : (
-                            data?.map((item, index) => (
+                            telegramGroupData?.map((item, index) => (
                                 <div key={index} className="grid grid-cols-[48px_1fr_2fr_80px] bg-white items-start px-3 py-3 border-b border-slate-200 hover:bg-gray-50 transition-colors">
                                     <div className="text-sm font-medium text-slate-600 bg-gray-200 p-2 rounded-md max-w-1/2">{index + 1}</div>
                                     <div className="flex flex-col">

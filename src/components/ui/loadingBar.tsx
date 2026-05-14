@@ -27,10 +27,9 @@ export default function LoadingBar({
                     <div
                         className="absolute inset-0 rounded-full"
                         style={{
-                            backgroundImage:
-                                "repeating-linear-gradient(135deg, transparent, transparent 6px, rgba(255,255,255,0.18) 6px, rgba(255,255,255,0.18) 12px)",
+                            backgroundImage:"repeating-linear-gradient(-45deg, transparent 0px, transparent 10px, rgba(255,255,255,0.2) 10px, rgba(255,255,255,0.2) 20px)",
+                            animation: "stripe-move 0.6s linear infinite",
                             backgroundSize: "28px 100%",
-                            animation: "stripe-move 1s linear infinite",
                         }}
                     />
                 </div>
@@ -50,10 +49,6 @@ export default function LoadingBar({
                 @keyframes stripe-move {
                     from { background-position: 0 0; }
                     to   { background-position: 28px 0; }
-                }
-                @keyframes shimmer {
-                    0%   { background-position: -200% 0; }
-                    100% { background-position:  200% 0; }
                 }
             `}</style>
         </div>

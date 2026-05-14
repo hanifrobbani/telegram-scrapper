@@ -4,12 +4,12 @@ import { useState } from 'react'
 import { ToasterType } from '@/types/toaster.type'
 
 export const useGetTeleGroup = () => {
-    const getTelegramGroup = useQuery<formTelegramGroup[]>({
+    const {data, error, isLoading, isError} = useQuery<formTelegramGroup[]>({
         queryKey: ['telegram_group'],
         queryFn: () => fetch('/api/telegram/group').then((res) => res.json()),
     })
 
-    return getTelegramGroup
+    return {telegramGroupData: data, telegramGroupError: error, isTelegramGroupError: isError, isTelegramGroupLoading: isLoading}
 }
 
 export const useAddTelegramGroupMutation = () => {

@@ -1,12 +1,17 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Select from "./ui/SelectOption"
 import { IconCategory } from "@tabler/icons-react"
 import Input from "./ui/Input"
 import Button from "./ui/Button"
-import { IconRocket, IconFolderOpen, IconRefresh, IconBrandTelegram } from "@tabler/icons-react"
+import { IconRocket, IconFolderOpen, IconRefresh, IconBrandTelegram, IconMessage, IconChevronRightFilled } from "@tabler/icons-react"
 import { useScrapMessageMutation } from "@/hooks/useScrapMessage"
 import { DataScrapperType } from "@/types/scrap.type"
 import LoadingBar from "./ui/loadingBar"
+import { useGetTeleGroup } from "@/hooks/useTelegramGroup"
+import { DataScrapperRespond } from "@/types/scrap.type"
+import { truncateText } from "@/helper/truncateText"
+
+type ScrapperItem = DataScrapperRespond['data'][0];
 
 export default function MainPage() {
     const [tableScrapResult, setTableScrapResult] = useState<string>('newest')
@@ -14,9 +19,10 @@ export default function MainPage() {
         setTableScrapResult(data)
     }
     const { mutate, error, isError, isPending, data } = useScrapMessageMutation()
+    const { telegramGroupData, isTelegramGroupError, isTelegramGroupLoading } = useGetTeleGroup()
     const [formData, setFormData] = useState<DataScrapperType>({ channelUrl: '', startDate: '', endDate: '' })
-
-
+    const [newProject, setNewProject] = useState<ScrapperItem[]>([])
+    const [updatedProject, setUpdatedProject] = useState<ScrapperItem[]>([])
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData(prev => ({
             ...prev,
@@ -24,12 +30,28 @@ export default function MainPage() {
         }))
     }
 
+    const seperateData = (data: ScrapperItem[]) => {
+        const newProject = data.filter(item => item.replyToId === true);
+        const updatedProject = data.filter(item => item.replyToId === false);
+
+        setNewProject(newProject)
+        setUpdatedProject(updatedProject)
+    }
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         mutate(formData)
-        console.log(formData)
         console.log(data);
     }
+
+
+    useEffect(() => {
+        if (data && !isPending && !isError) {
+            seperateData(data.data);
+            console.log("new project: ", newProject);
+            
+        }
+    }, [data, isPending, isError]);
 
     return (
         <div className="w-full p-5 space-y-4">
@@ -53,8 +75,17 @@ export default function MainPage() {
                         <div className="flex flex-col gap-1 w-full">
                             <label htmlFor="" className="font-semibold text-sm text-slate-700">Telegram Group</label>
                             <Select icon={<IconCategory size={16} />} name="channelUrl" onChange={handleChange}>
-                                <option value="">Select Group</option>
-                                <option value="https://t.me/airdropfind">Airdrop Finder</option>
+                                {isTelegramGroupLoading ? (
+                                    <option>Loading dulu...</option>
+                                ) : isTelegramGroupError ? (
+                                    <option>error</option>
+                                ) : (
+                                    <>
+                                        {telegramGroupData?.map((item, index) => (
+                                            <option value={item.url_group} key={index}>{item.title}</option>
+                                        ))}
+                                    </>
+                                )}
                             </Select>
                         </div>
                         <div className="flex flex-col gap-1 w-full">
@@ -88,17 +119,12 @@ export default function MainPage() {
                     </form>
                 </div>
 
-                {!isPending ? (
+                {isPending ? (
                     <div className="flex justify-between gap-5">
                         <div className="bg-blue-50 border border-slate-200 text-blue-600 p-5 rounded-xl shadow-md w-full flex justify-between gap-5 items-start">
                             <div className="flex justify-center">
                                 <div className="bg-blue-200 rounded-xl p-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-message-2">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M8 9h8" />
-                                        <path d="M8 13h6" />
-                                        <path d="M9 18h-3a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-3l-3 3l-3 -3" />
-                                    </svg>
+                                    <IconMessage size={30} />
                                 </div>
                             </div>
                             <div className="w-full space-y-7">
@@ -154,13 +180,7 @@ export default function MainPage() {
                     <div className="flex justify-between gap-10">
                         <div className="bg-blue-50 border border-slate-200 text-blue-600 p-5 rounded-xl shadow-md w-full flex justify-between gap-5 items-start">
                             <div className="flex justify-center">
-                                <div className="bg-blue-200 rounded-xl p-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-message-2">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M8 9h8" />
-                                        <path d="M8 13h6" />
-                                        <path d="M9 18h-3a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-3l-3 3l-3 -3" />
-                                    </svg>
+                                <div className="bg-blue-200 rounded-xl p-3"><IconMessage size={30} />
                                 </div>
                             </div>
                             <div className="w-full">
@@ -172,7 +192,7 @@ export default function MainPage() {
                         <div className="bg-green-50 text-green-600 border border-slate-200 shadow-md p-5 rounded-xl w-full flex justify-between gap-5 items-start">
                             <div className="flex justify-center">
                                 <div className="bg-green-200 rounded-xl p-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-folder-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 19h-7a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2h4l3 3h7a2 2 0 0 1 2 2v3.5" /><path d="M16 19h6" /><path d="M19 16v6" /></svg>
+                                    <IconFolderOpen size={30} />
                                 </div>
                             </div>
                             <div className="w-full">
@@ -184,7 +204,7 @@ export default function MainPage() {
                         <div className="bg-orange-50 text-orange-600 border border-slate-200 p-5 rounded-md shadow-md w-full flex justify-between gap-5 items-start">
                             <div className="flex justify-center">
                                 <div className="bg-orange-200 rounded-xl p-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-refresh"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>
+                                    <IconRefresh size={30} stroke={2} />
                                 </div>
                             </div>
                             <div className="w-full">
@@ -202,7 +222,7 @@ export default function MainPage() {
                             <h1 className="text-xl font-semibold">Scrape Result</h1>
                             <p className="text-sm text-slate-500">Final scrape resutl & filter by new or updated project</p>
                         </div>
-                        {!isPending ? (
+                        {isPending ? (
                             <div className=""></div>
                         ) : (
                             <div className="flex items-center bg-gray-200 p-1 rounded-xl w-fit">
@@ -222,7 +242,7 @@ export default function MainPage() {
                         )}
                     </header>
                     <div className="flex gap-2 w-full flex-col">
-                        {!isPending ? (
+                        {isPending ? (
                             <div className="flex justify-center items-center gap-1 w-full border border-slate-200 rounded-xl shadow bg-white p-10">
                                 <div className="space-y-5">
                                     <div className="flex gap-4">
@@ -233,10 +253,10 @@ export default function MainPage() {
                                         </div>
                                         <div className="max-w-md">
                                             <h1 className="font-semibold text-lg">Scrapping in Progress...</h1>
-                                            <p className="text-slate-600 text-sm">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Doloremque, nam? Ea totam officiis unde magni!</p>
+                                            <p className="text-slate-600 text-sm">Please wait while we collect the latest announcement from the selected Telegram Group</p>
                                         </div>
                                     </div>
-                                <LoadingBar label="Scraping" progress={50}/>
+                                    <LoadingBar label="Scraping" progress={50} />
                                 </div>
                             </div>
                         ) : (
@@ -246,7 +266,7 @@ export default function MainPage() {
                                         <header className="flex justify-between py-4 px-2 items-center">
                                             <div className="flex items-center gap-2">
                                                 <div className="bg-green-200 p-2 rounded-full text-green-600">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-folder-open"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 19l2.757 -7.351a1 1 0 0 1 .936 -.649h12.307a1 1 0 0 1 .986 1.164l-.996 5.211a2 2 0 0 1 -1.964 1.625h-14.026a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2h4l3 3h7a2 2 0 0 1 2 2v2" /></svg>
+                                                    <IconFolderOpen size={24} />
                                                 </div>
                                                 <div className="">
                                                     <h1 className="font-semibold">New Project</h1>
@@ -255,29 +275,50 @@ export default function MainPage() {
                                             </div>
                                             <p className="text-slate-400 text-sm">90 items</p>
                                         </header>
-                                        <div className="flex flex-col">
-                                            <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
-                                                <div className="flex gap-4 items-start">
-                                                    <div className="p-2 bg-gray-200 rounded-md">
-                                                        <p className="text-slate-700 text-sm font-semibold">1</p>
-                                                    </div>
-                                                    <div className="flex flex-col">
-                                                        <p className="font-semibold">New project</p>
-                                                        <p className="text-slate-600 text-sm">Description about the project</p>
-                                                    </div>
+                                        {Object.keys(newProject).length !== 0 ? (
+                                            newProject.map((item, index) => (
+                                                <div className="flex flex-col">
+                                                    <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
+                                                        <div className="flex gap-4 items-start">
+                                                            <div className="p-2 bg-gray-200 rounded-md">
+                                                                <p className="text-slate-700 text-sm font-semibold">{index}</p>
+                                                            </div>
+                                                            <div className="flex flex-col">
+                                                                <p className="font-semibold">{item.projectName}</p>
+                                                                <p className="text-slate-600 text-sm">{truncateText(item.text, 20)}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-gray-400">
+                                                            <IconChevronRightFilled size={24} />
+                                                        </div>
+                                                    </li>
                                                 </div>
-                                                <div className="text-gray-400">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M9 6l6 6l-6 6" /></svg>
-                                                </div>
-                                            </li>
-                                        </div>
+                                            ))
+                                        ) : (
+                                            <div className="flex flex-col">
+                                                <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
+                                                    <div className="flex gap-4 items-start">
+                                                        <div className="p-2 bg-gray-200 rounded-md">
+                                                            <p className="text-slate-700 text-sm font-semibold">1</p>
+                                                        </div>
+                                                        <div className="flex flex-col">
+                                                            <p className="font-semibold">New project</p>
+                                                            <p className="text-slate-600 text-sm">Description about the project</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-gray-400">
+                                                        <IconChevronRightFilled size={24} />
+                                                    </div>
+                                                </li>
+                                            </div>
+                                        )}
                                     </div>
                                 ) : (
                                     <div className="flex flex-col gap-1 w-full border border-slate-200 rounded-xl shadow bg-white">
                                         <header className="flex justify-between py-4 px-2 items-center">
                                             <div className="flex items-center gap-2">
                                                 <div className="bg-orange-200 p-2 rounded-full text-orange-600">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-rotate-clockwise"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4.05 11a8 8 0 1 1 .5 4m-.5 5v-5h5" /></svg>
+                                                    <IconRefresh size={24} />
                                                 </div>
                                                 <div className="">
                                                     <h1 className="font-semibold">Updated Project</h1>
@@ -286,22 +327,43 @@ export default function MainPage() {
                                             </div>
                                             <p className="text-slate-400 text-sm">90 items</p>
                                         </header>
-                                        <div className="flex flex-col">
-                                            <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
-                                                <div className="flex gap-4 items-start">
-                                                    <div className="p-2 bg-gray-200 rounded-md">
-                                                        <p className="text-slate-700 text-sm font-semibold">1</p>
-                                                    </div>
-                                                    <div className="flex flex-col">
-                                                        <p className="font-semibold">New project</p>
-                                                        <p className="text-slate-600 text-sm">Description about the project</p>
-                                                    </div>
+                                        {Object.keys(updatedProject).length !== 0 ? (
+                                            updatedProject.map((item, index) => (
+                                                <div className="flex flex-col">
+                                                    <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
+                                                        <div className="flex gap-4 items-start">
+                                                            <div className="p-2 bg-gray-200 rounded-md">
+                                                                <p className="text-slate-700 text-sm font-semibold">{index}</p>
+                                                            </div>
+                                                            <div className="flex flex-col">
+                                                                <p className="font-semibold">{item.projectName}</p>
+                                                                <p className="text-slate-600 text-sm">{truncateText(item.text, 20)}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-gray-400">
+                                                            <IconChevronRightFilled size={24} />
+                                                        </div>
+                                                    </li>
                                                 </div>
-                                                <div className="text-gray-400">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M9 6l6 6l-6 6" /></svg>
-                                                </div>
-                                            </li>
-                                        </div>
+                                            ))
+                                        ) : (
+                                            <div className="flex flex-col">
+                                                <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
+                                                    <div className="flex gap-4 items-start">
+                                                        <div className="p-2 bg-gray-200 rounded-md">
+                                                            <p className="text-slate-700 text-sm font-semibold">1</p>
+                                                        </div>
+                                                        <div className="flex flex-col">
+                                                            <p className="font-semibold">New project</p>
+                                                            <p className="text-slate-600 text-sm">Description about the project</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-gray-400">
+                                                        <IconChevronRightFilled size={24} />
+                                                    </div>
+                                                </li>
+                                            </div>
+                                        )}
                                     </div>
                                 )
                         )}
