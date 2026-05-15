@@ -31,25 +31,24 @@ export default function MainPage() {
     }
 
     const seperateData = (data: ScrapperItem[]) => {
-        const newProject = data.filter(item => item.replyToId === true);
-        const updatedProject = data.filter(item => item.replyToId === false);
+        const newProject = data.filter(item => item.type === "new");
+        const updatedProject = data.filter(item => item.type === "update");
 
         setNewProject(newProject)
         setUpdatedProject(updatedProject)
+
+        console.log("new project: ", newProject);
+        console.log("Updated project:",updatedProject)
     }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         mutate(formData)
-        console.log(data);
     }
-
-
     useEffect(() => {
         if (data && !isPending && !isError) {
             seperateData(data.data);
-            console.log("new project: ", newProject);
-            
+            console.log("data dari ui component: ",data)
         }
     }, [data, isPending, isError]);
 
@@ -277,7 +276,7 @@ export default function MainPage() {
                                         </header>
                                         {Object.keys(newProject).length !== 0 ? (
                                             newProject.map((item, index) => (
-                                                <div className="flex flex-col">
+                                                <div className="flex flex-col" key={index}>
                                                     <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
                                                         <div className="flex gap-4 items-start">
                                                             <div className="p-2 bg-gray-200 rounded-md">
@@ -329,7 +328,7 @@ export default function MainPage() {
                                         </header>
                                         {Object.keys(updatedProject).length !== 0 ? (
                                             updatedProject.map((item, index) => (
-                                                <div className="flex flex-col">
+                                                <div className="flex flex-col" key={index}>
                                                     <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
                                                         <div className="flex gap-4 items-start">
                                                             <div className="p-2 bg-gray-200 rounded-md">

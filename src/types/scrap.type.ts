@@ -10,6 +10,7 @@ export interface DataScrapperRespond {
         projectName: string;
         date: Date | string;
         text: string;
+        type: string;
         replyToId: boolean;
         entities: [
             {
