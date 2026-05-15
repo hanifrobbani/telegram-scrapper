@@ -38,11 +38,6 @@ function extractProjectName(
     }
   }
 
-  const keywordMatch = message.match(
-    /^(?:update|new airdrop|new waitlist)\s+(.+)/i
-  );
-  if (keywordMatch) return keywordMatch[1].split("\n")[0].trim();
-
   return firstLine;
 }
 

@@ -10,6 +10,7 @@ import LoadingBar from "./ui/loadingBar"
 import { useGetTeleGroup } from "@/hooks/useTelegramGroup"
 import { DataScrapperRespond } from "@/types/scrap.type"
 import { truncateText } from "@/helper/truncateText"
+import Image from "next/image"
 
 type ScrapperItem = DataScrapperRespond['data'][0];
 
@@ -36,9 +37,6 @@ export default function MainPage() {
 
         setNewProject(newProject)
         setUpdatedProject(updatedProject)
-
-        console.log("new project: ", newProject);
-        console.log("Updated project:",updatedProject)
     }
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -48,7 +46,6 @@ export default function MainPage() {
     useEffect(() => {
         if (data && !isPending && !isError) {
             seperateData(data.data);
-            console.log("data dari ui component: ",data)
         }
     }, [data, isPending, isError]);
 
@@ -176,7 +173,7 @@ export default function MainPage() {
                         </div>
                     </div>
                 ) : (
-                    <div className="flex justify-between gap-10">
+                    <div className="flex justify-between gap-5">
                         <div className="bg-blue-50 border border-slate-200 text-blue-600 p-5 rounded-xl shadow-md w-full flex justify-between gap-5 items-start">
                             <div className="flex justify-center">
                                 <div className="bg-blue-200 rounded-xl p-3"><IconMessage size={30} />
@@ -184,8 +181,8 @@ export default function MainPage() {
                             </div>
                             <div className="w-full">
                                 <p className="text-sm font-semibold">Total Message</p>
-                                <h1 className="text-4xl font-semibold text-gray-800">141</h1>
-                                <p className="text-slate-600 text-sm">Last scrape: 12 Mei 2026</p>
+                                <h1 className="text-4xl font-semibold text-gray-800">{Object.keys(data?.data || "0").length < 2 ? "0" : Object.keys(data?.data || "0").length}</h1>
+                                {/* <p className="text-slate-600 text-sm">Last scrape: 12 Mei 2026</p> */}
                             </div>
                         </div>
                         <div className="bg-green-50 text-green-600 border border-slate-200 shadow-md p-5 rounded-xl w-full flex justify-between gap-5 items-start">
@@ -196,7 +193,7 @@ export default function MainPage() {
                             </div>
                             <div className="w-full">
                                 <p className="text-sm font-semibold text-gray-800">New Project</p>
-                                <h1 className="text-4xl font-semibold text-gray-800">52</h1>
+                                <h1 className="text-4xl font-semibold text-gray-800">{Object.keys(newProject).length}</h1>
                                 <p className="inline py-1 px-1.5 rounded-md text-sm text-green-600 bg-green-200">New</p>
                             </div>
                         </div>
@@ -208,7 +205,7 @@ export default function MainPage() {
                             </div>
                             <div className="w-full">
                                 <p className="text-sm font-semibold text-gray-800">Updated Project</p>
-                                <h1 className="text-4xl font-semibold text-gray-800">141</h1>
+                                <h1 className="text-4xl font-semibold text-gray-800">{Object.keys(updatedProject).length}</h1>
                                 <p className="inline py-1 px-1.5 rounded-md text-sm text-orange-600 bg-orange-200">Update</p>
                             </div>
                         </div>
@@ -221,7 +218,7 @@ export default function MainPage() {
                             <h1 className="text-xl font-semibold">Scrape Result</h1>
                             <p className="text-sm text-slate-500">Final scrape resutl & filter by new or updated project</p>
                         </div>
-                        {isPending ? (
+                        {isPending || Object.keys(data?.data || 0).length < 2 ? (
                             <div className=""></div>
                         ) : (
                             <div className="flex items-center bg-gray-200 p-1 rounded-xl w-fit">
@@ -262,7 +259,7 @@ export default function MainPage() {
                             tableScrapResult == 'newest' ?
                                 (
                                     <div className="flex flex-col gap-1 w-full border border-slate-200 rounded-xl shadow bg-white">
-                                        <header className="flex justify-between py-4 px-2 items-center">
+                                        <header className={`${Object.keys(data?.data || 0).length < 2 ? "hidden" : "flex justify-between py-4 px-2 items-center"} `}>
                                             <div className="flex items-center gap-2">
                                                 <div className="bg-green-200 p-2 rounded-full text-green-600">
                                                     <IconFolderOpen size={24} />
@@ -272,7 +269,6 @@ export default function MainPage() {
                                                     <p className="text-sm text-slate-600">All the newest project</p>
                                                 </div>
                                             </div>
-                                            <p className="text-slate-400 text-sm">90 items</p>
                                         </header>
                                         {Object.keys(newProject).length !== 0 ? (
                                             newProject.map((item, index) => (
@@ -280,11 +276,11 @@ export default function MainPage() {
                                                     <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
                                                         <div className="flex gap-4 items-start">
                                                             <div className="p-2 bg-gray-200 rounded-md">
-                                                                <p className="text-slate-700 text-sm font-semibold">{index}</p>
+                                                                <p className="text-slate-700 text-sm font-semibold">{index + 1}</p>
                                                             </div>
                                                             <div className="flex flex-col">
-                                                                <p className="font-semibold">{item.projectName}</p>
-                                                                <p className="text-slate-600 text-sm">{truncateText(item.text, 20)}</p>
+                                                                <p className="font-semibold">{truncateText(item.projectName, 80)}</p>
+                                                                <p className="text-slate-600 text-sm">{truncateText(item.text, 50)}</p>
                                                             </div>
                                                         </div>
                                                         <div className="text-gray-400">
@@ -295,26 +291,19 @@ export default function MainPage() {
                                             ))
                                         ) : (
                                             <div className="flex flex-col">
-                                                <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
-                                                    <div className="flex gap-4 items-start">
-                                                        <div className="p-2 bg-gray-200 rounded-md">
-                                                            <p className="text-slate-700 text-sm font-semibold">1</p>
-                                                        </div>
-                                                        <div className="flex flex-col">
-                                                            <p className="font-semibold">New project</p>
-                                                            <p className="text-slate-600 text-sm">Description about the project</p>
-                                                        </div>
+                                                <div className="flex flex-col justify-center items-center border-b border-slate-400 p-10">
+                                                    <Image src={'/telegram-box.png'} width={200} height={200} alt="box telegram" />
+                                                    <div className="w-full max-w-xl text-center">
+                                                        <h1 className="text-lg font-semibold">No Scraping Results Yet!</h1>
+                                                        <p className="text-sm text-slate-600">Please select the teleggram group, choose time period & click scrap to start scrap the message</p>
                                                     </div>
-                                                    <div className="text-gray-400">
-                                                        <IconChevronRightFilled size={24} />
-                                                    </div>
-                                                </li>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
                                 ) : (
                                     <div className="flex flex-col gap-1 w-full border border-slate-200 rounded-xl shadow bg-white">
-                                        <header className="flex justify-between py-4 px-2 items-center">
+                                        <header className={`${Object.keys(data?.data || 0).length < 2 ? "hidden" : "flex justify-between py-4 px-2 items-center"} `}>
                                             <div className="flex items-center gap-2">
                                                 <div className="bg-orange-200 p-2 rounded-full text-orange-600">
                                                     <IconRefresh size={24} />
@@ -324,7 +313,6 @@ export default function MainPage() {
                                                     <p className="text-sm text-slate-600">All the updated project</p>
                                                 </div>
                                             </div>
-                                            <p className="text-slate-400 text-sm">90 items</p>
                                         </header>
                                         {Object.keys(updatedProject).length !== 0 ? (
                                             updatedProject.map((item, index) => (
@@ -332,10 +320,10 @@ export default function MainPage() {
                                                     <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
                                                         <div className="flex gap-4 items-start">
                                                             <div className="p-2 bg-gray-200 rounded-md">
-                                                                <p className="text-slate-700 text-sm font-semibold">{index}</p>
+                                                                <p className="text-slate-700 text-sm font-semibold">{index + 1}</p>
                                                             </div>
                                                             <div className="flex flex-col">
-                                                                <p className="font-semibold">{item.projectName}</p>
+                                                                <p className="font-semibold">{truncateText(item.projectName, 80)}</p>
                                                                 <p className="text-slate-600 text-sm">{truncateText(item.text, 20)}</p>
                                                             </div>
                                                         </div>
@@ -347,20 +335,15 @@ export default function MainPage() {
                                             ))
                                         ) : (
                                             <div className="flex flex-col">
-                                                <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
-                                                    <div className="flex gap-4 items-start">
-                                                        <div className="p-2 bg-gray-200 rounded-md">
-                                                            <p className="text-slate-700 text-sm font-semibold">1</p>
-                                                        </div>
-                                                        <div className="flex flex-col">
-                                                            <p className="font-semibold">New project</p>
-                                                            <p className="text-slate-600 text-sm">Description about the project</p>
+                                                <div className="flex flex-col">
+                                                    <div className="flex flex-col justify-center items-center border-b border-slate-400 p-10">
+                                                        <Image src={'/telegram-box.png'} width={200} height={200} alt="box telegram" />
+                                                        <div className="w-full max-w-xl text-center">
+                                                            <h1 className="text-lg font-semibold">No Scraping Results Yet!</h1>
+                                                            <p className="text-sm text-slate-600">Please select the teleggram group, choose time period & click scrap to start scrap the message</p>
                                                         </div>
                                                     </div>
-                                                    <div className="text-gray-400">
-                                                        <IconChevronRightFilled size={24} />
-                                                    </div>
-                                                </li>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
