@@ -3,7 +3,7 @@ import Select from "./ui/SelectOption"
 import { IconCategory, IconLink } from "@tabler/icons-react"
 import Input from "./ui/Input"
 import Button from "./ui/Button"
-import { IconRocket, IconFolderOpen, IconRefresh, IconBrandTelegram, IconMessage, IconChevronRightFilled, IconFolder, IconFileDescription, IconCalendarEvent, IconTag } from "@tabler/icons-react"
+import { IconRocket, IconFolderOpen, IconRefresh, IconBrandTelegram, IconMessage, IconChevronRightFilled, IconFolder, IconFileDescription, IconCalendarEvent, IconTag, IconFolderOff, IconRefreshOff } from "@tabler/icons-react"
 import { useScrapMessageMutation } from "@/hooks/useScrapMessage"
 import { DataScrapperType } from "@/types/scrap.type"
 import LoadingBar from "./ui/loadingBar"
@@ -80,6 +80,18 @@ export default function MainPage() {
             console.error(error);
         }
     }
+
+    useEffect(() =>{
+        if(!modal){
+            setButtonCopy("Copy Link")
+        }
+    }, [modal])
+
+    const hasSourceData = Object.keys(data?.data || {}).length >= 2;
+    const newProjectEmpty = Object.keys(newProject).length < 1;
+    const updatedProjectEmpty = Object.keys(updatedProject).length < 1;
+    const currentItems = tableScrapResult === 'newest' ? newProject : updatedProject;
+    const isCurrentEmpty = tableScrapResult === 'newest' ? newProjectEmpty : updatedProjectEmpty;
 
     return (
         <div className="w-full p-5 space-y-4">
@@ -245,141 +257,129 @@ export default function MainPage() {
                 )}
 
                 <section className="py-5">
-                    <header className="p-2 flex justify-between">
-                        <div className="">
+                    <header className="p-2 flex justify-between items-start mb-3">
+                        <div>
                             <h1 className="text-xl font-semibold">Scrape Result</h1>
-                            <p className="text-sm text-slate-500">Final scrape resutl & filter by new or updated project</p>
+                            <p className="text-sm text-slate-500">Final scrape result & filter by new or updated project</p>
                         </div>
-                        {isPending || Object.keys(data?.data || 0).length < 2 ? (
-                            <div className=""></div>
-                        ) : (
+
+                        {hasSourceData && !isPending && (
                             <div className="flex items-center bg-gray-200 p-1 rounded-xl w-fit">
-                                <button onClick={() => handleChangeTableScrapResult('newest')}
+                                <button
+                                    onClick={() => handleChangeTableScrapResult('newest')}
                                     className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'newest'
-                                        ? 'bg-white shadow text-blue-600 font-semibold' : 'text-slate-500 hover:text-slate-700'}`}>
+                                            ? 'bg-white shadow text-blue-600 font-semibold'
+                                            : 'text-slate-500 hover:text-slate-700'
+                                        }`}
+                                >
                                     Newest
                                 </button>
-
-                                <button onClick={() => handleChangeTableScrapResult('updated')}
-                                    className={` px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'updated'
-                                        ? 'bg-white shadow text-blue-600 font-semibold'
-                                        : 'text-slate-500 hover:text-slate-700'}`}>
+                                <button
+                                    onClick={() => handleChangeTableScrapResult('updated')}
+                                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'updated'
+                                            ? 'bg-white shadow text-blue-600 font-semibold'
+                                            : 'text-slate-500 hover:text-slate-700'
+                                        }`}
+                                >
                                     Updated
                                 </button>
                             </div>
                         )}
                     </header>
-                    <div className="flex gap-2 w-full flex-col">
+
+                    <div className="w-full border border-slate-200 rounded-xl shadow bg-white">
                         {isPending ? (
-                            <div className="flex justify-center items-center gap-1 w-full border border-slate-200 rounded-xl shadow bg-white p-10">
+                            <div className="flex justify-center items-center p-10">
                                 <div className="space-y-5">
                                     <div className="flex gap-4">
-                                        <div className="p-4 bg-blue-200 rounded-full">
-                                            <div className="text-blue-600">
-                                                <IconBrandTelegram size={40} />
-                                            </div>
+                                        <div className="p-4 bg-blue-200 rounded-full text-blue-600">
+                                            <IconBrandTelegram size={40} />
                                         </div>
                                         <div className="max-w-md">
                                             <h1 className="font-semibold text-lg">Scrapping in Progress...</h1>
-                                            <p className="text-slate-600 text-sm">Please wait while we collect the latest announcement from the selected Telegram Group</p>
+                                            <p className="text-slate-600 text-sm">
+                                                Please wait while we collect the latest announcements from the selected Telegram group.
+                                            </p>
                                         </div>
                                     </div>
                                     <LoadingBar label="Scraping" progress={loadingBarProgress} />
                                 </div>
                             </div>
+                        ) : !hasSourceData ? (
+                            // default ui when user not scrapping data
+                            <div className="flex flex-col justify-center items-center p-10 gap-3">
+                                <Image src="/telegram-box.png" width={200} height={200} alt="box telegram" />
+                                <div className="text-center max-w-sm">
+                                    <h1 className="text-lg font-semibold">No Scraping Results Yet!</h1>
+                                    <p className="text-sm text-slate-600">
+                                        Select a Telegram group, choose a time period, and click scrape to get started.
+                                    </p>
+                                </div>
+                            </div>
                         ) : (
-                            tableScrapResult == 'newest' ?
-                                (
-                                    <div className="flex flex-col gap-1 w-full border border-slate-200 rounded-xl shadow bg-white">
-                                        <header className={`${Object.keys(data?.data || 0).length < 2 ? "hidden" : "flex justify-between py-4 px-2 items-center"} `}>
-                                            <div className="flex items-center gap-2">
-                                                <div className="bg-green-200 p-2 rounded-full text-green-600">
-                                                    <IconFolderOpen size={24} />
-                                                </div>
-                                                <div className="">
-                                                    <h1 className="font-semibold">New Project</h1>
-                                                    <p className="text-sm text-slate-600">All the newest project</p>
-                                                </div>
-                                            </div>
-                                        </header>
-                                        {Object.keys(newProject).length !== 0 ? (
-                                            newProject.map((item, index) => (
-                                                <div className="flex flex-col" key={index} onClick={() => handleModalOpen(item)}>
-                                                    <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
-                                                        <div className="flex gap-4 items-start">
-                                                            <div className="p-2 bg-gray-200 rounded-md">
-                                                                <p className="text-slate-700 text-sm font-semibold">{index + 1}</p>
-                                                            </div>
-                                                            <div className="flex flex-col">
-                                                                <p className="font-semibold">{truncateText(item.projectName, 80)}</p>
-                                                                <p className="text-slate-600 text-sm">{truncateText(item.text, 50)}</p>
-                                                            </div>
-                                                        </div>
-                                                        <div className="text-gray-400">
-                                                            <IconChevronRightFilled size={24} />
-                                                        </div>
-                                                    </li>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <div className="flex flex-col">
-                                                <div className="flex flex-col justify-center items-center border-b border-slate-400 p-10">
-                                                    <Image src={'/telegram-box.png'} width={200} height={200} alt="box telegram" />
-                                                    <div className="w-full max-w-xl text-center">
-                                                        <h1 className="text-lg font-semibold">No Scraping Results Yet!</h1>
-                                                        <p className="text-sm text-slate-600">Please select the teleggram group, choose time period & click scrap to start scrap the message</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
+                            // ── scrapping done, reveal tab toogle 
+                            <>
+                                <header className="flex items-center gap-2 py-4 px-4 border-b border-slate-200">
+                                    <div className={`p-2 rounded-full ${tableScrapResult === 'newest'
+                                            ? 'bg-green-200 text-green-600'
+                                            : 'bg-orange-200 text-orange-600'
+                                        }`}>
+                                        {tableScrapResult === 'newest'
+                                            ? <IconFolderOpen size={24} />
+                                            : <IconRefresh size={24} />
+                                        }
+                                    </div>
+                                    <div>
+                                        <h1 className="font-semibold">
+                                            {tableScrapResult === 'newest' ? 'New Project' : 'Updated Project'}
+                                        </h1>
+                                        <p className="text-sm text-slate-600">
+                                            {tableScrapResult === 'newest' ? 'All the newest projects' : 'All the updated projects'}
+                                        </p>
+                                    </div>
+                                </header>
+
+                                {isCurrentEmpty ? (
+                                    // Scrape finish but data is empty
+                                    <div className="flex flex-col justify-center items-center p-10 gap-3">
+                                        {tableScrapResult === 'newest'
+                                            ? <IconFolderOff size={40} className="text-slate-400" />
+                                            : <IconRefreshOff size={40} className="text-slate-400" />
+                                        }
+                                        <div className="text-center max-w-sm">
+                                            <h1 className="text-lg font-semibold">
+                                                No {tableScrapResult === 'newest' ? 'New' : 'Updated'} Projects Found
+                                            </h1>
+                                            <p className="text-sm text-slate-600">
+                                                The scrape completed, but no {tableScrapResult === 'newest' ? 'new' : 'updated'} projects
+                                                were found in the selected time period.
+                                            </p>
+                                        </div>
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col gap-1 w-full border border-slate-200 rounded-xl shadow bg-white">
-                                        <header className={`${Object.keys(data?.data || 0).length < 2 ? "hidden" : "flex justify-between py-4 px-2 items-center"} `}>
-                                            <div className="flex items-center gap-2">
-                                                <div className="bg-orange-200 p-2 rounded-full text-orange-600">
-                                                    <IconRefresh size={24} />
-                                                </div>
-                                                <div className="">
-                                                    <h1 className="font-semibold">Updated Project</h1>
-                                                    <p className="text-sm text-slate-600">All the updated project</p>
-                                                </div>
-                                            </div>
-                                        </header>
-                                        {Object.keys(updatedProject).length !== 0 ? (
-                                            updatedProject.map((item, index) => (
-                                                <div className="flex flex-col" key={index} onClick={() => handleModalOpen(item)}>
-                                                    <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
-                                                        <div className="flex gap-4 items-start">
-                                                            <div className="p-2 bg-gray-200 rounded-md">
-                                                                <p className="text-slate-700 text-sm font-semibold">{index + 1}</p>
-                                                            </div>
-                                                            <div className="flex flex-col">
-                                                                <p className="font-semibold">{truncateText(item.projectName, 80)}</p>
-                                                                <p className="text-slate-600 text-sm">{truncateText(item.text, 20)}</p>
-                                                            </div>
-                                                        </div>
-                                                        <div className="text-gray-400">
-                                                            <IconChevronRightFilled size={24} />
-                                                        </div>
-                                                    </li>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <div className="flex flex-col">
-                                                <div className="flex flex-col">
-                                                    <div className="flex flex-col justify-center items-center border-b border-slate-400 p-10">
-                                                        <Image src={'/telegram-box.png'} width={200} height={200} alt="box telegram" />
-                                                        <div className="w-full max-w-xl text-center">
-                                                            <h1 className="text-lg font-semibold">No Scraping Results Yet!</h1>
-                                                            <p className="text-sm text-slate-600">Please select the teleggram group, choose time period & click scrap to start scrap the message</p>
-                                                        </div>
+                                    <ul>
+                                        {currentItems.map((item, index) => (
+                                            // all data found & complete
+                                            <li
+                                                key={index}
+                                                onClick={() => handleModalOpen(item)}
+                                                className="flex justify-between items-center border-b border-slate-200 last:border-b-0 p-3 hover:bg-gray-100 cursor-pointer transition-colors"
+                                            >
+                                                <div className="flex gap-4 items-start">
+                                                    <div className="p-2 bg-gray-100 rounded-md">
+                                                        <p className="text-slate-700 text-sm font-semibold">{index + 1}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-semibold">{truncateText(item.projectName, 80)}</p>
+                                                        <p className="text-slate-600 text-sm">{truncateText(item.text, 50)}</p>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                )
+                                                <IconChevronRightFilled size={24} className="text-gray-400 shrink-0" />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </>
                         )}
                     </div>
                 </section>
@@ -396,7 +396,7 @@ export default function MainPage() {
                                 </div>
                                 <div className="flex flex-col">
                                     <h1 className="font-semibold text-sm">Project Name</h1>
-                                    <p className="text-slate-600 text-sm">{modalData?.projectName}</p>
+                                    <p className="text-slate-600 text-sm">{truncateText(modalData?.projectName || "", 30)}</p>
                                 </div>
                             </div>
                             <div className="flex gap-4">
@@ -445,7 +445,7 @@ export default function MainPage() {
                                 </div>
                                 <h1 className="text-sm font-semibold">Text Message</h1>
                             </div>
-                            <div className="flex-1 max-h-96 w-full text-slate-800 bg-blue-50 border border-slate-400 text-sm rounded-md p-3 overflow-y-scroll overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden whitespace-pre-line">
+                            <div className="flex-1 max-h-96 w-full text-slate-800 bg-blue-50 border border-slate-400 text-sm rounded-md p-3 overflow-y-scroll overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden whitespace-pre-line break-all">
                                 {modalData?.text}
                             </div>
                         </div>
@@ -454,6 +454,7 @@ export default function MainPage() {
                         <Button
                             label="Close"
                             variant="primary"
+                            onClick={() => setModal(false)}
                         />
                         <Button
                             label={buttonCopy}
