@@ -77,7 +77,7 @@ export default function Modal({
                                                 </h2>
                                             )}
                                             {description && (
-                                                <p className="text-sm text-slate-400 leading-tight">
+                                                <p className="text-sm text-slate-600 leading-tight">
                                                     {description}
                                                 </p>
                                             )}

@@ -13,6 +13,8 @@ import { truncateText } from "@/helper/formatText"
 import Image from "next/image"
 import Modal from "./ui/modalDialog"
 import { formatDate, formatDateWIB } from "@/helper/formatDate"
+import Toaster from '@/components/ui/modalToaster'
+import { useFakeProgress } from "@/helper/fakeProgress"
 
 type ScrapperItem = DataScrapperRespond['data'][0];
 
@@ -21,7 +23,7 @@ export default function MainPage() {
     const handleChangeTableScrapResult = (data: string) => {
         setTableScrapResult(data)
     }
-    const { mutate, error, isError, isPending, data } = useScrapMessageMutation()
+    const { mutate, error, isError, isPending, data, toaster, setToaster } = useScrapMessageMutation()
     const { telegramGroupData, isTelegramGroupError, isTelegramGroupLoading } = useGetTeleGroup()
     useEffect(() => {
         if (telegramGroupData && telegramGroupData.length > 0) {
@@ -38,6 +40,7 @@ export default function MainPage() {
     const [modal, setModal] = useState<boolean>(false)
     const [modalData, setModaldata] = useState<ScrapperItem | null>(null)
     const [buttonCopy, setButtonCopy] = useState<string>("Copy Link")
+    const loadingBarProgress = useFakeProgress(isPending)
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData(prev => ({
             ...prev,
@@ -68,14 +71,14 @@ export default function MainPage() {
         setModaldata(modalData)
     }
 
-    const handleCopyLink = async (text: string) =>{
+    const handleCopyLink = async (text: string) => {
         try {
-        await navigator.clipboard.writeText(text);
+            await navigator.clipboard.writeText(text);
 
-        setButtonCopy("Link Copied!")
-    } catch (error) {
-        console.error(error);
-    }
+            setButtonCopy("Link Copied!")
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (
@@ -101,7 +104,7 @@ export default function MainPage() {
                             <label htmlFor="" className="font-semibold text-sm text-slate-700">Telegram Group</label>
                             <Select icon={<IconCategory size={16} />} name="channelUrl" onChange={handleChange}>
                                 {isTelegramGroupLoading ? (
-                                    <option>Loading dulu...</option>
+                                    <option>Loading data...</option>
                                 ) : isTelegramGroupError ? (
                                     <option>error</option>
                                 ) : (
@@ -281,7 +284,7 @@ export default function MainPage() {
                                             <p className="text-slate-600 text-sm">Please wait while we collect the latest announcement from the selected Telegram Group</p>
                                         </div>
                                     </div>
-                                    <LoadingBar label="Scraping" progress={50} />
+                                    <LoadingBar label="Scraping" progress={loadingBarProgress} />
                                 </div>
                             </div>
                         ) : (
@@ -442,7 +445,7 @@ export default function MainPage() {
                                 </div>
                                 <h1 className="text-sm font-semibold">Text Message</h1>
                             </div>
-                            <div className="flex-1 max-h-96 w-full bg-blue-100 border border-slate-400 text-sm rounded-md p-3 overflow-y-scroll overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden whitespace-pre-line">
+                            <div className="flex-1 max-h-96 w-full text-slate-800 bg-blue-50 border border-slate-400 text-sm rounded-md p-3 overflow-y-scroll overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden whitespace-pre-line">
                                 {modalData?.text}
                             </div>
                         </div>
@@ -461,6 +464,15 @@ export default function MainPage() {
                     </div>
                 </div>
             </Modal>
+
+            <Toaster
+                type={toaster.type}
+                message={toaster.message}
+                isOpen={toaster.isOpen}
+                onClose={() => setToaster(prev => ({ ...prev, isOpen: false }))}
+                autoClose={true}
+                duration={3000}
+            />
 
         </div>
     )
