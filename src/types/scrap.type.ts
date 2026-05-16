@@ -12,6 +12,7 @@ export interface DataScrapperRespond {
         text: string;
         type: string;
         replyToId: boolean;
+        messageUrl: string;
         entities: [
             {
                 className: string;

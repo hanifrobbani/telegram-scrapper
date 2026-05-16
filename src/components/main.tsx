@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react"
 import Select from "./ui/SelectOption"
-import { IconCategory } from "@tabler/icons-react"
+import { IconCategory, IconLink } from "@tabler/icons-react"
 import Input from "./ui/Input"
 import Button from "./ui/Button"
-import { IconRocket, IconFolderOpen, IconRefresh, IconBrandTelegram, IconMessage, IconChevronRightFilled } from "@tabler/icons-react"
+import { IconRocket, IconFolderOpen, IconRefresh, IconBrandTelegram, IconMessage, IconChevronRightFilled, IconFolder, IconFileDescription, IconCalendarEvent, IconTag } from "@tabler/icons-react"
 import { useScrapMessageMutation } from "@/hooks/useScrapMessage"
 import { DataScrapperType } from "@/types/scrap.type"
 import LoadingBar from "./ui/loadingBar"
 import { useGetTeleGroup } from "@/hooks/useTelegramGroup"
 import { DataScrapperRespond } from "@/types/scrap.type"
-import { truncateText } from "@/helper/truncateText"
+import { truncateText } from "@/helper/formatText"
 import Image from "next/image"
+import Modal from "./ui/modalDialog"
+import { formatDate, formatDateWIB } from "@/helper/formatDate"
 
 type ScrapperItem = DataScrapperRespond['data'][0];
 
@@ -21,9 +23,21 @@ export default function MainPage() {
     }
     const { mutate, error, isError, isPending, data } = useScrapMessageMutation()
     const { telegramGroupData, isTelegramGroupError, isTelegramGroupLoading } = useGetTeleGroup()
+    useEffect(() => {
+        if (telegramGroupData && telegramGroupData.length > 0) {
+            setFormData(prev => ({
+                ...prev,
+                channelUrl: prev.channelUrl || telegramGroupData[0].url_group
+            }))
+        }
+    }, [telegramGroupData])
+
     const [formData, setFormData] = useState<DataScrapperType>({ channelUrl: '', startDate: '', endDate: '' })
     const [newProject, setNewProject] = useState<ScrapperItem[]>([])
     const [updatedProject, setUpdatedProject] = useState<ScrapperItem[]>([])
+    const [modal, setModal] = useState<boolean>(false)
+    const [modalData, setModaldata] = useState<ScrapperItem | null>(null)
+    const [buttonCopy, setButtonCopy] = useState<string>("Copy Link")
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData(prev => ({
             ...prev,
@@ -48,6 +62,21 @@ export default function MainPage() {
             seperateData(data.data);
         }
     }, [data, isPending, isError]);
+
+    const handleModalOpen = (modalData: ScrapperItem) => {
+        setModal(true)
+        setModaldata(modalData)
+    }
+
+    const handleCopyLink = async (text: string) =>{
+        try {
+        await navigator.clipboard.writeText(text);
+
+        setButtonCopy("Link Copied!")
+    } catch (error) {
+        console.error(error);
+    }
+    }
 
     return (
         <div className="w-full p-5 space-y-4">
@@ -272,7 +301,7 @@ export default function MainPage() {
                                         </header>
                                         {Object.keys(newProject).length !== 0 ? (
                                             newProject.map((item, index) => (
-                                                <div className="flex flex-col" key={index}>
+                                                <div className="flex flex-col" key={index} onClick={() => handleModalOpen(item)}>
                                                     <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
                                                         <div className="flex gap-4 items-start">
                                                             <div className="p-2 bg-gray-200 rounded-md">
@@ -316,7 +345,7 @@ export default function MainPage() {
                                         </header>
                                         {Object.keys(updatedProject).length !== 0 ? (
                                             updatedProject.map((item, index) => (
-                                                <div className="flex flex-col" key={index}>
+                                                <div className="flex flex-col" key={index} onClick={() => handleModalOpen(item)}>
                                                     <li className="flex justify-between items-center border-b border-slate-400 p-3 hover:bg-gray-200 cursor-pointer transition-colors">
                                                         <div className="flex gap-4 items-start">
                                                             <div className="p-2 bg-gray-200 rounded-md">
@@ -352,6 +381,87 @@ export default function MainPage() {
                     </div>
                 </section>
             </main>
+            <Modal isOpen={modal} onClose={() => setModal(false)} size="large" title="Detail Message" description="Detail information about the project" iconColor="blue" icon={<IconMessage size={30} />}>
+                <div className="flex flex-col px-4 pb-4 pt-2 min-h-96 h-full justify-between gap-2">
+                    <div className="w-full flex flex-1 justify-between">
+                        <div className="w-full flex flex-col gap-5 max-w-80">
+                            <div className="flex gap-4">
+                                <div className="flex justify-center">
+                                    <div className="bg-purple-200 text-purple-600 rounded-xl p-2">
+                                        <IconFolder size={24} />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col">
+                                    <h1 className="font-semibold text-sm">Project Name</h1>
+                                    <p className="text-slate-600 text-sm">{modalData?.projectName}</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-4">
+                                <div className="flex justify-center">
+                                    <div className="bg-green-200 text-green-600 rounded-xl p-2">
+                                        <IconCalendarEvent size={24} />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col">
+                                    <h1 className="font-semibold text-sm">Date</h1>
+                                    <p className="text-slate-600 text-sm">
+                                        {modalData && formatDateWIB(formatDate(modalData.date))}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex gap-4">
+                                <div className="flex justify-center">
+                                    <div className="bg-orange-200 text-orange-600 rounded-xl p-2">
+                                        <IconTag size={24} />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col">
+                                    <h1 className="font-semibold text-sm">Type</h1>
+                                    <p className="text-slate-600 text-sm">{modalData?.type}</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-4">
+                                <div className="flex justify-center">
+                                    <div className="bg-blue-200 text-blue-600 rounded-xl p-2">
+                                        <IconLink size={24} />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col">
+                                    <h1 className="font-semibold text-sm">Message URL</h1>
+                                    <a href={modalData?.messageUrl} target="_blank" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-blue-600 transition-colors max-w-full truncate group hover:underline underline-offset-2">
+                                        <span className="truncate">{modalData?.messageUrl}</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 5a1 1 0 0 1 0 2h-6a1 1 0 0 0 -1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1 -1v-6a1 1 0 0 1 2 0v6a3 3 0 0 1 -3 3h-10a3 3 0 0 1 -3 -3v-10a3 3 0 0 1 3 -3zm3 -2h5l.075 .003l.126 .017l.111 .03l.111 .044l.098 .052l.096 .067l.09 .08q .054 .053 .097 .112l.071 .11l.054 .114l.035 .105l.03 .148l.006 .118v5a1 1 0 0 1 -2 0v-2.586l-7.293 7.293a1 1 0 0 1 -1.414 -1.414l7.291 -7.293h-2.584a1 1 0 0 1 0 -2" /></svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full flex flex-col">
+                            <div className="flex gap-1">
+                                <div className="text-blue-600">
+                                    <IconFileDescription size={24} />
+                                </div>
+                                <h1 className="text-sm font-semibold">Text Message</h1>
+                            </div>
+                            <div className="flex-1 max-h-96 w-full bg-blue-100 border border-slate-400 text-sm rounded-md p-3 overflow-y-scroll overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden whitespace-pre-line">
+                                {modalData?.text}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex flex-row-reverse gap-2 mt-3">
+                        <Button
+                            label="Close"
+                            variant="primary"
+                        />
+                        <Button
+                            label={buttonCopy}
+                            variant="secondary"
+                            icon={<IconLink size={16} />}
+                            onClick={() => handleCopyLink(modalData?.messageUrl as string)}
+                        />
+                    </div>
+                </div>
+            </Modal>
+
         </div>
     )
 }

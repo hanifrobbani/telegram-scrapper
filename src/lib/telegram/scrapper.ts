@@ -10,6 +10,7 @@ export interface AirdropMessage {
   date: string;
   text: string;
   replyToId: number | null;
+  messageUrl: string;
   entities: Api.TypeMessageEntity[];
 }
 
@@ -90,6 +91,7 @@ export async function scrapeChannel({
         date: new Date(msgTimestamp * 1000).toISOString(),
         text: msg.message,
         replyToId: replyTo?.replyToMsgId ?? null,
+        messageUrl: `https://t.me/${username}/${msg.id}`,
         entities,
       });
     }
