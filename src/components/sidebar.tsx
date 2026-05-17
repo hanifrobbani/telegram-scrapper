@@ -2,6 +2,7 @@ type SidebarProps = {
   setPageUser: (page: string) => void
 }
 
+import Image from "next/image"
 import { useState } from "react"
 export default function Sidebar({setPageUser}: SidebarProps) {
 
@@ -16,12 +17,10 @@ export default function Sidebar({setPageUser}: SidebarProps) {
         <div className="bg-slate-900 h-full min-w-60 pl-0.5 space-y-4 text-slate-200">
             <div className="p-4">
                 <div className="flex items-start gap-2">
-                    <div className="bg-blue-600 text-white rounded-full p-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-brand-telegram"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4" /></svg>
-                    </div>
+                    <Image src={'/telegram.png'} width={35} height={35} alt="telegram icon"/>
                     <div className="flex flex-col">
                         <h1 className="font-semibold text-lg">Telegram Scrapper</h1>
-                        <p className="text-gray-400 text-sm">airdrop tracker</p>
+                        <p className="text-gray-300 text-sm">airdrop tracker</p>
                     </div>
                 </div>
             </div>
