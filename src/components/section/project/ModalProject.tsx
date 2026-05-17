@@ -196,6 +196,7 @@ export const ModalDeleteData = ({ ToasterData, ModalData, ItemSelected }: TypeMo
                     type="button"
                     label="Cancel"
                     variant="secondary-red"
+                    onClick={() => ModalData(false)}
                 />
                 <Button
                     type="submit"
