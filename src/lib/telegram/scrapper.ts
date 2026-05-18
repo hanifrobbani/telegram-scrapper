@@ -44,7 +44,7 @@ function extractProjectName(
 
 function parseChannelInput(channelUrl: string): string {
   const match = channelUrl.match(/(?:t\.me\/|@)?([a-zA-Z0-9_]+)\/?$/);
-  if (!match) throw new Error("Format channel URL tidak valid");
+  if (!match) throw new Error("Format channel URL is not valid!");
   return match[1];
 }
 
