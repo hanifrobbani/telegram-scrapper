@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
                 expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
             })
 
-        setAuthCookies(accessToken, refreshToken)
+        await setAuthCookies(accessToken, refreshToken)
 
         return NextResponse.json(
             { message: 'Login successfully' },

@@ -3,7 +3,7 @@ import React from "react";
 interface ButtonProps {
     label: string;
     type?: "button" | "submit" | "reset";
-    variant?: "primary" | "primary-red" | "secondary" | "secondary-red";
+    variant?: "primary" | "primary-red" | "secondary" | "secondary-red" | "custom";
     loadingType?: boolean;
     icon?: React.ReactNode;
     iconPosition?: "left" | "right";
@@ -11,7 +11,7 @@ interface ButtonProps {
     disabled?: boolean;
     className?: string;
     iconOnly?: boolean;
-    size?: string;
+    size?: "normal" | "large";
 }
 
 export default function Button({
@@ -29,7 +29,7 @@ export default function Button({
 }: ButtonProps) {
     const baseClass =`inline-flex items-center ${iconOnly ? "" : "gap-1.5"} rounded-md ${size === "large" ? "px-4 py-3 justify-center" : "px-4 py-1.5 text-sm"} cursor-pointer transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed`;
 
-    const variantClass = variant === "primary" ? "text-white bg-blue-600 hover:bg-blue-500" : variant === "primary-red" ? "text-white bg-red-600 hover:bg-red-500" : variant === "secondary-red" ? "text-red-600 bg-white border border-red-400 hover:bg-red-100" : "text-slate-600 bg-white border border-slate-600 hover:bg-slate-100";
+    const variantClass = variant === "primary" ? "text-white bg-blue-600 hover:bg-blue-500" : variant === "primary-red" ? "text-white bg-red-600 hover:bg-red-500" : variant === "secondary-red" ? "text-red-600 bg-white border border-red-400 hover:bg-red-100" : variant === "secondary" ? "text-slate-600 bg-white border border-slate-600 hover:bg-slate-100" : "";
 
     const isDisabled = disabled || loadingType;
 

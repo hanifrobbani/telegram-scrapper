@@ -10,7 +10,7 @@ type ModalProps = {
     description?: string
     icon?: ReactNode
     iconColor?: 'blue' | 'green' | 'red' | 'yellow' | 'slate'
-    size?: string
+    size?: "small" | "medium" | "large"
 }
 
 const iconColorMap: Record<NonNullable<ModalProps['iconColor']>, string> = {

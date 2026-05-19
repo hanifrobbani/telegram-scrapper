@@ -24,7 +24,7 @@ export async function POST() {
 
             const userId = payload.sub as string
             const { data: storedTokens } = await supabase.from('refresh_tokens').select('id, token_hash').eq('user_id', userId)
-            console.log(storedTokens)
+            // console.log(storedTokens)
             if (storedTokens && storedTokens.length > 0) {
                 for (const stored of storedTokens) {
                     const isMatch = await bcrypt.compare(refreshToken, stored.token_hash)
