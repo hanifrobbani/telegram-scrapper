@@ -5,7 +5,7 @@ type ToasterType = "success" | "error";
 
 interface ToasterProps {
     type: ToasterType;
-    message: string;
+    message: string | undefined;
     isOpen: boolean;
     onClose: () => void;
     autoClose?: boolean;

@@ -22,19 +22,30 @@ export const useRegisterMutation = () => {
 
 
 export const useLoginMutation = () => {
-    const { mutate, isPending, isError } = useMutation<loginUserRespond, Error, loginUser>({
-        mutationFn: (data) => fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }).then(res => res.json()),
+
+    const { mutate, isPending, isError, error } = useMutation<loginUserRespond, Error, loginUser>({
+        mutationFn: async (data) => {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+
+            const result = await res.json()
+            if (!res.ok) {
+                throw new Error(result.error)
+            }
+
+            return result
+        },
 
         onSuccess: (data) => {
-            console.log(data.message)
+            console.log(data)
+            window.location.href = '/'
         }, onError: (error) => {
             console.log(error)
         }
     })
 
-    return {mutate, isPending, isError}
+    return { mutate, isPending, isError, error }
 }

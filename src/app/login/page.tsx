@@ -3,14 +3,40 @@ import Input from "@/components/ui/Input"
 import Button from "@/components/ui/Button"
 import { IconMail, IconLock, IconLogin2 } from "@tabler/icons-react"
 import Image from "next/image"
+import { useLoginMutation } from "@/hooks/useUser"
+import { useState, useEffect } from "react"
+import { loginUser } from "@/types/user.type"
+import Toaster from "@/components/ui/modalToaster"
 
 export default function Login() {
+    const { mutate, isPending, isError, error } = useLoginMutation()
+    const [form, setForm] = useState<loginUser>({ email: '', password: '' })
+    const [toaster, setToaster] = useState<boolean>(false)
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setForm(prev => ({
+            ...prev,
+            [e.target.name]: e.target.value
+        }))
+    }
+
+    useEffect(() => {
+        if (isError) {
+            setToaster(true)
+        }
+    }, [isError])
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        mutate(form)
+    }
+
     return (
         <div className="flex justify-between min-h-screen w-full">
             <div className="w-full bg-linear-to-t from-blue-900 to-gray-800 p-10 flex flex-col justify-between items-center">
                 <div className="w-full h-full flex flex-col justify-between items-center">
                     <div className="w-full max-w-md flex gap-4 py-3 justify-center">
-                        <Image src={'/telegram.png'} width={45} height={45} alt="telegram icon" className="object-contain"/>
+                        <Image src={'/telegram.png'} width={45} height={45} alt="telegram icon" className="object-contain" />
 
                         <div className="flex-1">
                             <h1 className="text-lg font-semibold text-white">Telegram scrapper</h1>
@@ -33,13 +59,14 @@ export default function Login() {
                     <h1 className="font-semibold text-2xl">Welcome Back!</h1>
                     <p className="text-slate-600 text-sm">Sign In to your account to continue</p>
                 </div>
-                <form action="" className="space-y-3 w-full max-w-md mt-5">
+                <form onSubmit={handleSubmit} className="space-y-3 w-full max-w-md mt-5">
                     <div className="w-full">
                         <label htmlFor="" className="text-sm text-slate-600">Email</label>
                         <Input
                             name="email"
                             placeholder="Enter your email"
                             type="email"
+                            onChange={handleChange}
                             icon={<IconMail size={20} />}
                             required
                             size="large"
@@ -51,6 +78,7 @@ export default function Login() {
                             name="password"
                             placeholder="Enter your password"
                             type="password"
+                            onChange={handleChange}
                             icon={<IconLock size={20} />}
                             required
                             size="large"
@@ -64,6 +92,7 @@ export default function Login() {
                             icon={<IconLogin2 size={24} />}
                             className="w-full"
                             size="large"
+                            loadingType={isPending}
                         />
                     </div>
                 </form>
@@ -71,6 +100,15 @@ export default function Login() {
                     <p className="text-slate-600">Don't have an account? <a href="" className="text-blue-600 hover:underline">Request Access</a></p>
                 </div>
             </div>
+
+            <Toaster
+                type={"error"}
+                message={error?.message}
+                isOpen={toaster}
+                onClose={() => setToaster(false)}
+                autoClose={true}
+                duration={3000}
+            />
         </div>
     )
 }
