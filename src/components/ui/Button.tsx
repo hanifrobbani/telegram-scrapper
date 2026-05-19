@@ -10,7 +10,8 @@ interface ButtonProps {
     onClick?: () => void;
     disabled?: boolean;
     className?: string;
-    iconOnly?: boolean
+    iconOnly?: boolean;
+    size?: string;
 }
 
 export default function Button({
@@ -24,9 +25,9 @@ export default function Button({
     disabled,
     iconOnly = false,
     className = "",
+    size = "normal"
 }: ButtonProps) {
-    const baseClass =
-        `inline-flex items-center ${iconOnly ? "" : "gap-1.5"} text-sm rounded-md px-4 py-1.5 cursor-pointer transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed`;
+    const baseClass =`inline-flex items-center ${iconOnly ? "" : "gap-1.5"} rounded-md ${size === "large" ? "px-4 py-3 justify-center" : "px-4 py-1.5 text-sm"} cursor-pointer transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed`;
 
     const variantClass = variant === "primary" ? "text-white bg-blue-600 hover:bg-blue-500" : variant === "primary-red" ? "text-white bg-red-600 hover:bg-red-500" : variant === "secondary-red" ? "text-red-600 bg-white border border-red-400 hover:bg-red-100" : "text-slate-600 bg-white border border-slate-600 hover:bg-slate-100";
 

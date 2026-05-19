@@ -11,6 +11,7 @@ interface InputProps {
     disabled?: boolean;
     required?: boolean;
     className?: string;
+    size?: string;
 }
 
 export default function Input({
@@ -24,9 +25,11 @@ export default function Input({
     disabled = false,
     required = false,
     className = "",
+    size = "normal"
 }: InputProps) {
+    const inputSize = size === "large" ? "px-4 py-2" : "px-3 py-1.5 text-sm" 
     return (
-        <div className={`flex items-center gap-2 w-full rounded-md border border-slate-400 bg-white px-3 py-1.5 text-sm text-slate-700 
+        <div className={`flex items-center gap-2 w-full rounded-md border border-slate-400 bg-white ${inputSize} text-slate-700 
             focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent
             ${disabled ? "opacity-60 cursor-not-allowed bg-slate-50" : ""} ${className}`}>
             {icon && (
