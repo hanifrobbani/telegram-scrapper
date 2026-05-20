@@ -21,16 +21,28 @@ export const useAddProjectMutation = () => {
 
     const queryClient = useQueryClient()
 
-     const { mutate, isPending, isError, error } = useMutation<telegramProjectRespond, Error, formTelegramProject>({
-        mutationFn: (data) => fetch('/api/projects', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }).then(res => res.json()),
+    const { mutate, isPending, isError, error } = useMutation<telegramProjectRespond, Error, formTelegramProject>({
+        mutationFn: async (data) => {
+            const res = await fetch('/api/projects', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+
+            const result = await res.json()
+            if (!res.ok) {
+                throw new Error(result.message)
+            }
+
+            return result
+        },
+        onMutate: () => {
+            setToaster({ isOpen: false, type: "success", message: "" })
+        },
 
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['projects'] })
-            
+
             setToaster({ isOpen: true, type: "success", message: data.message })
         }, onError: (error) => {
             setToaster({ isOpen: true, type: "error", message: error.message })
@@ -38,7 +50,7 @@ export const useAddProjectMutation = () => {
 
     })
 
-    return { mutate, isPending, isError, error, toaster, setToaster}
+    return { mutate, isPending, isError, error, toaster, setToaster }
 }
 
 export const useUpdateProjectMutation = () => {
@@ -47,11 +59,23 @@ export const useUpdateProjectMutation = () => {
     const queryClient = useQueryClient()
 
     const { mutate, isPending, isError, error } = useMutation<telegramProjectRespond, Error, formTelegramProject>({
-        mutationFn: (data) => fetch('/api/projects', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }).then(res => res.json()),
+        mutationFn: async (data) => {
+            const res = await fetch('/api/projects', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+
+            const result = await res.json()
+            if (!res.ok) {
+                throw new Error(result.message)
+            }
+
+            return result
+        },
+        onMutate: () => {
+            setToaster({ isOpen: false, type: "success", message: "" })
+        },
 
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['projects'] })
@@ -71,12 +95,25 @@ export const useDeleteProject = () => {
 
     const queryClient = useQueryClient()
 
-    const { mutate, isPending, isError, error } = useMutation<telegramProjectRespond, Error, formTelegramProject>({
-        mutationFn: (data) => fetch('/api/projects', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }).then(res => res.json()),
+    const { mutate, isPending } = useMutation<telegramProjectRespond, Error, formTelegramProject>({
+        mutationFn: async (data) => {
+            const res = await fetch('/api/projects', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+
+            const result = await res.json()
+            if (!res.ok) {
+                throw new Error(result.message)
+            }
+
+            return result
+        },
+        onMutate: () => {
+            setToaster({ isOpen: false, type: "success", message: "" })
+        },
+
 
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['projects'] })
@@ -87,6 +124,6 @@ export const useDeleteProject = () => {
         }
 
     })
-    return { mutate, isPending, isError, error, toaster }
+    return { mutate, isPending, toaster }
 
 }

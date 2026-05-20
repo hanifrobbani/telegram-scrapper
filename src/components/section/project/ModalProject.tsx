@@ -14,11 +14,13 @@ type TypeModalProps = {
 }
 
 export const ModalCreateData = ({ ToasterData, ModalData }: TypeModalProps) => {
-    const [form, setForm] = useState<formTelegramProject>({ url_project: '', project_name: '', type: '' })
-    const { mutate, isError, isPending, toaster } = useAddProjectMutation()
+    const [form, setForm] = useState<formTelegramProject>({ url_project: '', project_name: '', type: 'airdrop' })
+    const { mutate, isError, isPending, toaster, error } = useAddProjectMutation()
+    const isFormFilled = Object.values(form).every(val => val.trim() !== "")
 
     useEffect(() => {
-        if (toaster.isOpen) {
+        if (!toaster.isOpen) return
+        if (toaster.type === "success" || (toaster.type === "error" && isFormFilled)) {
             ModalData(false)
             setTimeout(() => {
                 ToasterData(toaster)
@@ -47,6 +49,8 @@ export const ModalCreateData = ({ ToasterData, ModalData }: TypeModalProps) => {
                         placeholder="Name of the project"
                         icon={<IconLabelFilled size={16} />}
                         value={form.project_name}
+                        isError={!form.project_name.trim() ? isError : false}
+                        errorMessage={error?.message}
                         onChange={handleChange}
                     />
                 </div>
@@ -58,13 +62,14 @@ export const ModalCreateData = ({ ToasterData, ModalData }: TypeModalProps) => {
                             placeholder="URL of the Project"
                             icon={<IconLink size={16} />}
                             value={form.url_project}
+                            isError={!form.url_project.trim() ? isError : false}
+                            errorMessage={error?.message}
                             onChange={handleChange}
                         />
                     </div>
                     <div className="w-full">
                         <label htmlFor="" className="text-sm text-slate-600">Project Type</label>
                         <Select value={form.type} icon={<IconCategory size={16} />} name="type" onChange={handleChange}>
-                            <option value="">Select Type</option>
                             <option value="airdrop">Airdrop</option>
                             <option value="trade">Trade</option>
                             <option value="nft">NFTs</option>
@@ -93,10 +98,12 @@ export const ModalCreateData = ({ ToasterData, ModalData }: TypeModalProps) => {
 
 export const ModalUpdateData = ({ ToasterData, ModalData, ItemSelected }: TypeModalProps) => {
     const [form, setForm] = useState<formTelegramProject>({ url_project: ItemSelected?.url_project ?? '', project_name: ItemSelected?.project_name ?? '', type: ItemSelected?.type ?? '', id: ItemSelected?.id })
-    const { mutate, isError, isPending, toaster } = useUpdateProjectMutation()
+    const { mutate, isError, isPending, toaster, error } = useUpdateProjectMutation()
+    const isFormFilled = Object.values(form).every(val => val.trim() !== "")
 
     useEffect(() => {
-        if (toaster.isOpen) {
+        if (!toaster.isOpen) return
+        if (toaster.type === "success" || (toaster.type === "error" && isFormFilled)) {
             ModalData(false)
             setTimeout(() => {
                 ToasterData(toaster)
@@ -125,6 +132,8 @@ export const ModalUpdateData = ({ ToasterData, ModalData, ItemSelected }: TypeMo
                         placeholder="Name of the project"
                         icon={<IconLabelFilled size={16} />}
                         value={form.project_name}
+                        isError={!form.project_name.trim() ? isError : false}
+                        errorMessage={error?.message}
                         onChange={handleChange}
                     />
                 </div>
@@ -136,13 +145,14 @@ export const ModalUpdateData = ({ ToasterData, ModalData, ItemSelected }: TypeMo
                             placeholder="URL of the Project"
                             icon={<IconLink size={16} />}
                             value={form.url_project}
+                            isError={!form.url_project.trim() ? isError : false}
+                            errorMessage={error?.message}
                             onChange={handleChange}
                         />
                     </div>
                     <div className="w-full">
                         <label htmlFor="" className="text-sm text-slate-600">Project Type</label>
                         <Select value={form.type} icon={<IconCategory size={16} />} name="type" onChange={handleChange}>
-                            <option value="">Select Type</option>
                             <option value="airdrop">Airdrop</option>
                             <option value="trade">Trade</option>
                             <option value="nft">NFTs</option>
@@ -171,7 +181,7 @@ export const ModalUpdateData = ({ ToasterData, ModalData, ItemSelected }: TypeMo
 
 export const ModalDeleteData = ({ ToasterData, ModalData, ItemSelected }: TypeModalProps) => {
     const [form, setForm] = useState<formTelegramProject>({ url_project: ItemSelected?.url_project ?? '', project_name: ItemSelected?.project_name ?? '', type: ItemSelected?.type ?? '', id: ItemSelected?.id })
-    const { mutate, isError, isPending, toaster } = useDeleteProject()
+    const { mutate, isPending, toaster } = useDeleteProject()
 
     useEffect(() => {
         if (toaster.isOpen) {

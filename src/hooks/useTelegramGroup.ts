@@ -4,12 +4,12 @@ import { useState } from 'react'
 import { ToasterType } from '@/types/toaster.type'
 
 export const useGetTeleGroup = () => {
-    const {data, error, isLoading, isError} = useQuery<formTelegramGroup[]>({
+    const { data, error, isLoading, isError } = useQuery<formTelegramGroup[]>({
         queryKey: ['telegram_group'],
         queryFn: () => fetch('/api/telegram/group').then((res) => res.json()),
     })
 
-    return {telegramGroupData: data, telegramGroupError: error, isTelegramGroupError: isError, isTelegramGroupLoading: isLoading}
+    return { telegramGroupData: data, telegramGroupError: error, isTelegramGroupError: isError, isTelegramGroupLoading: isLoading }
 }
 
 export const useAddTelegramGroupMutation = () => {
@@ -18,12 +18,23 @@ export const useAddTelegramGroupMutation = () => {
     const queryClient = useQueryClient()
 
     const { mutate, isPending, isError, error } = useMutation<telegramGroupRespond, Error, formTelegramGroup>({
-        mutationFn: (data) => fetch('/api/telegram/group', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }).then(res => res.json()),
+        mutationFn: async (data) => {
+            const res = await fetch('/api/telegram/group', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
 
+            const result = await res.json()
+            if (!res.ok) {
+                throw new Error(result.message)
+            }
+
+            return result
+        },
+        onMutate: () => {
+            setToaster({ isOpen: false, type: "success", message: "" })
+        },
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['telegram_group'] })
 
@@ -43,11 +54,23 @@ export const useUpdateTelegramGroupMutation = () => {
     const queryClient = useQueryClient()
 
     const { mutate, isPending, isError, error } = useMutation<telegramGroupRespond, Error, formTelegramGroup>({
-        mutationFn: (data) => fetch('/api/telegram/group', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }).then(res => res.json()),
+        mutationFn: async (data) => {
+            const res = await fetch('/api/telegram/group', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+
+            const result = await res.json()
+            if (!res.ok) {
+                throw new Error(result.message)
+            }
+
+            return result
+        },
+        onMutate: () => {
+            setToaster({ isOpen: false, type: "success", message: "" })
+        },
 
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['telegram_group'] })
@@ -67,12 +90,24 @@ export const useDeleteTelegramGroup = () => {
 
     const queryClient = useQueryClient()
 
-    const { mutate, isPending, isError, error } = useMutation<telegramGroupRespond, Error, formTelegramGroup>({
-        mutationFn: (data) => fetch('/api/telegram/group', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }).then(res => res.json()),
+    const { mutate, isPending } = useMutation<telegramGroupRespond, Error, formTelegramGroup>({
+        mutationFn: async (data) => {
+            const res = await fetch('/api/telegram/group', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+
+            const result = await res.json()
+            if (!res.ok) {
+                throw new Error(result.message)
+            }
+
+            return result
+        },
+        onMutate: () => {
+            setToaster({ isOpen: false, type: "success", message: "" })
+        },
 
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['telegram_group'] })
@@ -83,6 +118,6 @@ export const useDeleteTelegramGroup = () => {
         }
 
     })
-    return { mutate, isPending, isError, error, toaster }
+    return { mutate, isPending, toaster }
 
 }

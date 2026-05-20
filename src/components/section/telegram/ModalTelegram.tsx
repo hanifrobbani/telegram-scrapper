@@ -16,10 +16,12 @@ type TypeModalProps = {
 export const ModalCreateData = ({ ToasterData, ModalData }: TypeModalProps) => {
 
     const [form, setForm] = useState<formTelegramGroup>({ url_group: '', title: '' })
-    const { mutate, isError, isPending, toaster } = useAddTelegramGroupMutation()
+    const { mutate, isError, isPending, toaster, error } = useAddTelegramGroupMutation()
+    const isFormFilled = Object.values(form).every(val => val.trim() !== "")
 
     useEffect(() => {
-        if (toaster.isOpen) {
+        if (!toaster.isOpen) return
+        if (toaster.type === "success" || (toaster.type === "error" && isFormFilled)) {
             ModalData(false)
             setTimeout(() => {
                 ToasterData(toaster)
@@ -50,6 +52,8 @@ export const ModalCreateData = ({ ToasterData, ModalData }: TypeModalProps) => {
                         icon={<IconLabelFilled size={16} />}
                         value={form.title}
                         onChange={handleChange}
+                        isError={!form.title.trim() ? isError : false}
+                        errorMessage={error?.message}
                     />
                 </div>
                 <div className="">
@@ -60,6 +64,8 @@ export const ModalCreateData = ({ ToasterData, ModalData }: TypeModalProps) => {
                         icon={<IconLink size={16} />}
                         value={form.url_group}
                         onChange={handleChange}
+                        isError={!form.url_group.trim() ? isError : false}
+                        errorMessage={error?.message}
                     />
                 </div>
 
@@ -84,10 +90,12 @@ export const ModalCreateData = ({ ToasterData, ModalData }: TypeModalProps) => {
 
 export const ModalUpdateData = ({ ToasterData, ModalData, ItemSelected }: TypeModalProps) => {
     const [form, setForm] = useState<formTelegramGroup>({ url_group: ItemSelected?.url_group ?? '', title: ItemSelected?.title ?? '', id: ItemSelected?.id })
-    const { mutate, isError, isPending, toaster } = useUpdateTelegramGroupMutation()
+    const { mutate, isError, isPending, toaster, error } = useUpdateTelegramGroupMutation()
+    const isFormFilled = Object.values(form).every(val => val.trim() !== "")
 
     useEffect(() => {
-        if (toaster.isOpen) {
+        if (!toaster.isOpen) return
+        if (toaster.type === "success" || (toaster.type === "error" && isFormFilled)) {
             ModalData(false)
             setTimeout(() => {
                 ToasterData(toaster)
@@ -117,6 +125,8 @@ export const ModalUpdateData = ({ ToasterData, ModalData, ItemSelected }: TypeMo
                         placeholder="Name of the Group"
                         icon={<IconLabelFilled size={16} />}
                         value={form.title}
+                        isError={!form.title.trim() ? isError : false}
+                        errorMessage={error?.message}
                         onChange={handleChange}
                     />
                 </div>
@@ -127,6 +137,8 @@ export const ModalUpdateData = ({ ToasterData, ModalData, ItemSelected }: TypeMo
                         placeholder="URL Group"
                         icon={<IconLink size={16} />}
                         value={form.url_group}
+                        isError={!form.url_group.trim() ? isError : false}
+                        errorMessage={error?.message}
                         onChange={handleChange}
                     />
                 </div>
@@ -152,7 +164,7 @@ export const ModalUpdateData = ({ ToasterData, ModalData, ItemSelected }: TypeMo
 
 export const ModalDeleteData = ({ ToasterData, ModalData, ItemSelected }: TypeModalProps) => {
     const [form, setForm] = useState<formTelegramGroup>({ url_group: ItemSelected?.url_group ?? '', title: ItemSelected?.title ?? '', id: ItemSelected?.id })
-    const { mutate, isError, isPending, toaster } = useDeleteTelegramGroup()
+    const { mutate, isPending, toaster } = useDeleteTelegramGroup()
 
     useEffect(() => {
         if (toaster.isOpen) {

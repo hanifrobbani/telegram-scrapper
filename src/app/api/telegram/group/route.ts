@@ -15,7 +15,7 @@ export async function GET() {
         }
         return NextResponse.json(data)
     } catch (error) {
-        return NextResponse.json({ error: "unexpected error", status: 500 })
+        return NextResponse.json({ error: error }, { status: 500})
     }
 }
 
@@ -29,21 +29,21 @@ export async function POST(request: Request) {
     ]
 
     if (requiredFields.some(field => !field?.trim())) {
-        return NextResponse.json({
-            message: "Data cannot be empty",
-            status: 400
-        })
+        return NextResponse.json(
+            { message: "Data cannot be empty" },
+            { status: 400 }
+        )
     }
 
     try {
         const { data, error } = await supabase.from('telegram_groups').insert(formData).select()
         if (error) {
-            return NextResponse.json({ error: error, status: 500 })
+            return NextResponse.json({ error: error }, { status: 500 })
         }
 
-        return NextResponse.json({ data: data, status: 201, message: "Success add new group" })
+        return NextResponse.json({ data: data, message: "Success add new group" }, { status: 201 })
     } catch (error) {
-        return NextResponse.json({ error: error, status: 500 })
+        return NextResponse.json({ error: error }, { status: 500 })
     }
 }
 
@@ -58,21 +58,21 @@ export async function PUT(request: Request) {
     ]
 
     if (requiredFields.some(field => !field?.trim())) {
-        return NextResponse.json({
-            message: "Data cannot be empty",
-            status: 400
-        })
+        return NextResponse.json(
+            { message: "Data cannot be empty" },
+            { status: 400 }
+        )
     }
 
     try {
         const { data, error } = await supabase.from('telegram_groups').update(formData).eq('id', formData.id)
         if (error) {
-            return NextResponse.json({ error: error, status: 500 })
+            return NextResponse.json({ error: error }, { status: 500 })
         }
 
-        return NextResponse.json({ data: data, status: 200, message: "Success update group" })
+        return NextResponse.json({ data: data, message: "Success update group" }, { status: 200 })
     } catch (error) {
-        return NextResponse.json({ error: error, status: 500 })
+        return NextResponse.json({ error: error }, { status: 500 })
     }
 }
 
@@ -85,17 +85,17 @@ export async function DELETE(request: Request) {
     ]
 
     if (requiredFields.some(field => !field?.trim())) {
-        return NextResponse.json({
-            message: "Data Id cannot be empty",
-            status: 400
-        })
+        return NextResponse.json(
+            { message: "Data cannot be empty" },
+            { status: 400 }
+        )
     }
 
     const { error } = await supabase.from('telegram_groups').delete().eq('id', formData.id)
 
     if (error) {
-        return NextResponse.json({ error: error, status: 500 })
+        return NextResponse.json({ error: error }, { status: 500 })
     }
 
-    return NextResponse.json({ status: 200, message: "Success delete telegram group" })
+    return NextResponse.json({ message: "Success delete telegram group" }, { status: 200 })
 }

@@ -1,4 +1,5 @@
 import React from "react";
+import { IconAlertTriangleFilled } from '@tabler/icons-react';
 
 interface InputProps {
     type?: React.HTMLInputTypeAttribute;
@@ -12,6 +13,8 @@ interface InputProps {
     required?: boolean;
     className?: string;
     size?: string;
+    isError?: boolean;
+    errorMessage?: string;
 }
 
 export default function Input({
@@ -25,28 +28,38 @@ export default function Input({
     disabled = false,
     required = false,
     className = "",
-    size = "normal"
+    size = "normal",
+    isError = false,
+    errorMessage = ""
 }: InputProps) {
-    const inputSize = size === "large" ? "px-4 py-2" : "px-3 py-1.5 text-sm" 
+    const inputSize = size === "large" ? "px-4 py-2" : "px-3 py-1.5 text-sm"
     return (
-        <div className={`flex items-center gap-2 w-full rounded-md border border-slate-400 bg-white ${inputSize} text-slate-700 
-            focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent
+        <>
+            <div className={`flex items-center gap-2 w-full rounded-md ${isError ? "border-2 border-red-500 focus-within:ring-red-500" : "border border-slate-400 focus-within:ring-blue-500"} bg-white ${inputSize} text-slate-700 
+            outline-none focus-within:ring-2 focus-within:border-transparent
             ${disabled ? "opacity-60 cursor-not-allowed bg-slate-50" : ""} ${className}`}>
-            {icon && (
-                <span className="shrink-0 text-slate-400">{icon}</span>
-            )}
+                {icon && (
+                    <span className="shrink-0 text-slate-400">{icon}</span>
+                )}
 
-            <input
-                type={type}
-                name={name}
-                id={id}
-                placeholder={placeholder}
-                value={value}
-                onChange={onChange}
-                disabled={disabled}
-                required={required}
-                className="w-full bg-transparent outline-none placeholder:text-slate-400 disabled:cursor-not-allowed"
-            />
-        </div>
+                <input
+                    type={type}
+                    name={name}
+                    id={id}
+                    placeholder={placeholder}
+                    value={value}
+                    onChange={onChange}
+                    disabled={disabled}
+                    required={required}
+                    className="w-full bg-transparent outline-none placeholder:text-slate-400 disabled:cursor-not-allowed"
+                />
+            </div>
+            {isError && (
+                <div className="flex gap-1 text-red-600 mt-1.5">
+                    <span><IconAlertTriangleFilled size={16} /></span>
+                    <p className="text-xs">{errorMessage}</p>
+                </div>
+            )}
+        </>
     );
 }
