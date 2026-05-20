@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAccessToken } from '@/lib/auth/jwt'
 
-const authRoutes = ['/login']
+const authRoutes = ['/login', '/request-access']
 
 export async function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl

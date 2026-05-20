@@ -1,17 +1,19 @@
 'use client'
 import Input from "@/components/ui/Input"
 import Button from "@/components/ui/Button"
-import { IconMail, IconLock, IconLogin2 } from "@tabler/icons-react"
 import Image from "next/image"
+import { IconMail, IconLock, IconLogin2 } from "@tabler/icons-react"
 import { useLoginMutation } from "@/hooks/useUser"
 import { useState, useEffect } from "react"
 import { loginUser } from "@/types/user.type"
 import Toaster from "@/components/ui/modalToaster"
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
     const { mutate, isPending, isError, error } = useLoginMutation()
     const [form, setForm] = useState<loginUser>({ email: '', password: '' })
     const [toaster, setToaster] = useState<boolean>(false)
+    const router = useRouter()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm(prev => ({
@@ -97,7 +99,7 @@ export default function Login() {
                     </div>
                 </form>
                 <div className="w-full text-sm text-center mt-10">
-                    <p className="text-slate-600">Don't have an account? <a href="" className="text-blue-600 hover:underline">Request Access</a></p>
+                    <p className="text-slate-600">Don't have an account? <a onClick={() => router.push('/request-access')} className="text-blue-600 hover:underline cursor-pointer">Request Access</a></p>
                 </div>
             </div>
 
