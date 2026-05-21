@@ -13,6 +13,15 @@ export async function POST(req: NextRequest) {
             )
         }
 
+        const { data: existingEmail } = await supabase.from('req_access').select('id').eq('email', email).single()
+
+        if (existingEmail) {
+            return NextResponse.json(
+                { error: 'Request access for this email already exist!' },
+                { status: 409 }
+            )
+        }
+
         const { data, error } = await supabase.from('req_access').insert({ email, message }).select('id, email').single()
         if (error) {
             console.log(error)

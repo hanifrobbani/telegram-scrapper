@@ -17,11 +17,13 @@ export default function Home() {
       <Sidebar setPageUser={handleChangePage} />
 
       <div className="flex-1 overflow-y-auto">
-        {page == 'scrapper' ? (
+        {/* make MainPage always mounted */}
+        <div className={page === 'scrapper' ? 'block' : 'hidden'}>
           <MainPage />
-        ) : page == 'project' ? (
-          <ProjectPage />
-        ) : (<TelegramGroupPage />)}
+        </div>
+
+        {page === 'project' && <ProjectPage />}
+        {page === 'telegram-group' && <TelegramGroupPage />}
       </div>
     </div>
   )
