@@ -49,7 +49,7 @@ export default function Sidebar({ setPageUser }: SidebarProps) {
                             <div className="">
                                 <IconDatabaseExport size={24} />
                             </div>
-                            <p>Scrap Announcement</p>
+                            <p>Scrap Message</p>
                         </div>
                         <div className={`w-full font-semibold text-sm flex items-center gap-2 px-4 py-2 cursor-pointer ${page == 'project' ? 'border-l-4 border-blue-700 bg-blue-800/30' : 'border-l-4 border-transparent hover:border-l-4 hover:border-blue-700 hover:bg-blue-800/30 transition-colors'}`} onClick={() => handleClickPage('project')}>
                             <div className="">

@@ -8,15 +8,14 @@ import { useScrapMessageMutation } from "@/hooks/useScrapMessage"
 import { DataScrapperType } from "@/types/scrap.type"
 import LoadingBar from "../../ui/loadingBar"
 import { useGetTeleGroup } from "@/hooks/useTelegramGroup"
-import { DataScrapperRespond } from "@/types/scrap.type"
+import { ScrapperItem } from "@/types/scrap.type"
 import { truncateText } from "@/helper/formatText"
 import Image from "next/image"
 import Modal from "../../ui/modalDialog"
 import { formatDate, formatDateWIB } from "@/helper/formatDate"
 import Toaster from '@/components/ui/modalToaster'
 import { useFakeProgress } from "@/helper/fakeProgress"
-
-type ScrapperItem = DataScrapperRespond['data'][0];
+import { useScrapData } from "@/stores/useScrapData"
 
 export default function ScrapPage() {
     const [tableScrapResult, setTableScrapResult] = useState<string>('newest')
@@ -33,10 +32,8 @@ export default function ScrapPage() {
             }))
         }
     }, [telegramGroupData])
-
+    const setScrapData = useScrapData((state) => state.setScrapData);
     const [formData, setFormData] = useState<DataScrapperType>({ channelUrl: '', startDate: '', endDate: '' })
-    const [newProject, setNewProject] = useState<ScrapperItem[]>([])
-    const [updatedProject, setUpdatedProject] = useState<ScrapperItem[]>([])
     const [modal, setModal] = useState<boolean>(false)
     const [modalData, setModaldata] = useState<ScrapperItem | null>(null)
     const [buttonCopy, setButtonCopy] = useState<string>("Copy Link")
@@ -48,23 +45,18 @@ export default function ScrapPage() {
         }))
     }
 
-    const seperateData = (data: ScrapperItem[]) => {
-        const newProject = data.filter(item => item.type === "new");
-        const updatedProject = data.filter(item => item.type === "update");
-
-        setNewProject(newProject)
-        setUpdatedProject(updatedProject)
-    }
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         mutate(formData)
     }
     useEffect(() => {
         if (data && !isPending && !isError) {
-            seperateData(data.data);
+            setScrapData(data);
         }
     }, [data, isPending, isError]);
+
+    const newProjects = useScrapData((state) => state.newProjects);
+    const updatedProjects = useScrapData((state) => state.updatedProjects);
 
     const handleModalOpen = (modalData: ScrapperItem) => {
         setModal(true)
@@ -87,15 +79,15 @@ export default function ScrapPage() {
         }
     }, [modal])
 
-    const hasSourceData = Object.keys(data?.data || {}).length >= 2;
-    const newProjectEmpty = Object.keys(newProject).length < 1;
-    const updatedProjectEmpty = Object.keys(updatedProject).length < 1;
-    const currentItems = tableScrapResult === 'newest' ? newProject : updatedProject;
+    const rawData = useScrapData((state) => state.rawData);
+    const hasSourceData = rawData.length > 0;
+    const newProjectEmpty = newProjects.length < 1;
+    const updatedProjectEmpty = updatedProjects.length < 1;
+    const currentItems = tableScrapResult === 'newest' ? newProjects : updatedProjects;
     const isCurrentEmpty = tableScrapResult === 'newest' ? newProjectEmpty : updatedProjectEmpty;
 
     return (
         <div className="w-full">
-
             <main className="w-full flex flex-col gap-5">
                 <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 space-y-4">
                     <div className="flex gap-2 items-center">
@@ -221,7 +213,7 @@ export default function ScrapPage() {
                             </div>
                             <div className="w-full">
                                 <p className="text-sm font-semibold">Total Message</p>
-                                <h1 className="text-4xl font-semibold text-gray-800">{Object.keys(data?.data || "0").length < 2 ? "0" : Object.keys(data?.data || "0").length}</h1>
+                                <h1 className="text-4xl font-semibold text-gray-800">{rawData.length ? rawData.length : "0"}</h1>
                                 {/* <p className="text-slate-600 text-sm">Last scrape: 12 Mei 2026</p> */}
                             </div>
                         </div>
@@ -233,7 +225,7 @@ export default function ScrapPage() {
                             </div>
                             <div className="w-full">
                                 <p className="text-sm font-semibold text-gray-800">New Project</p>
-                                <h1 className="text-4xl font-semibold text-gray-800">{Object.keys(newProject).length}</h1>
+                                <h1 className="text-4xl font-semibold text-gray-800">{Object.keys(newProjects).length}</h1>
                                 <p className="inline py-1 px-1.5 rounded-md text-sm text-green-600 bg-green-200">New</p>
                             </div>
                         </div>
@@ -245,7 +237,7 @@ export default function ScrapPage() {
                             </div>
                             <div className="w-full">
                                 <p className="text-sm font-semibold text-gray-800">Updated Project</p>
-                                <h1 className="text-4xl font-semibold text-gray-800">{Object.keys(updatedProject).length}</h1>
+                                <h1 className="text-4xl font-semibold text-gray-800">{Object.keys(updatedProjects).length}</h1>
                                 <p className="inline py-1 px-1.5 rounded-md text-sm text-orange-600 bg-orange-200">Update</p>
                             </div>
                         </div>
@@ -359,8 +351,7 @@ export default function ScrapPage() {
                                             <li
                                                 key={index}
                                                 onClick={() => handleModalOpen(item)}
-                                                className="flex justify-between items-center border-b border-slate-200 last:border-b-0 p-3 hover:bg-gray-100 cursor-pointer transition-colors"
-                                            >
+                                                className="flex justify-between items-center border-b border-slate-200 last:border-b-0 p-3 hover:bg-gray-100 cursor-pointer transition-colors">
                                                 <div className="flex gap-4 items-start">
                                                     <div className="p-2 bg-gray-100 rounded-md">
                                                         <p className="text-slate-700 text-sm font-semibold">{index + 1}</p>

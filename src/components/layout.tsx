@@ -8,8 +8,8 @@ import ScrapPage from "@/components/pages/scrapper";
 export default function LayoutPage() {
     const titlePage: any = {
         scrapper: {
-            title: "Announcement",
-            description: "Scrape & filter project announcements"
+            title: "Announcement & Message",
+            description: "Scrape & filter project message & announcements"
         },
         project: {
             title: "List Project",
