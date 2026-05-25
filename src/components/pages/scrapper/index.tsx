@@ -1,24 +1,24 @@
 import { useEffect, useState } from "react"
-import Select from "./ui/SelectOption"
+import Select from "../../ui/SelectOption"
 import { IconCategory, IconLink } from "@tabler/icons-react"
-import Input from "./ui/Input"
-import Button from "./ui/Button"
+import Input from "../../ui/Input"
+import Button from "../../ui/Button"
 import { IconRocket, IconFolderOpen, IconRefresh, IconBrandTelegram, IconMessage, IconChevronRightFilled, IconFolder, IconFileDescription, IconCalendarEvent, IconTag, IconFolderOff, IconRefreshOff } from "@tabler/icons-react"
 import { useScrapMessageMutation } from "@/hooks/useScrapMessage"
 import { DataScrapperType } from "@/types/scrap.type"
-import LoadingBar from "./ui/loadingBar"
+import LoadingBar from "../../ui/loadingBar"
 import { useGetTeleGroup } from "@/hooks/useTelegramGroup"
 import { DataScrapperRespond } from "@/types/scrap.type"
 import { truncateText } from "@/helper/formatText"
 import Image from "next/image"
-import Modal from "./ui/modalDialog"
+import Modal from "../../ui/modalDialog"
 import { formatDate, formatDateWIB } from "@/helper/formatDate"
 import Toaster from '@/components/ui/modalToaster'
 import { useFakeProgress } from "@/helper/fakeProgress"
 
 type ScrapperItem = DataScrapperRespond['data'][0];
 
-export default function MainPage() {
+export default function ScrapPage() {
     const [tableScrapResult, setTableScrapResult] = useState<string>('newest')
     const handleChangeTableScrapResult = (data: string) => {
         setTableScrapResult(data)
@@ -81,8 +81,8 @@ export default function MainPage() {
         }
     }
 
-    useEffect(() =>{
-        if(!modal){
+    useEffect(() => {
+        if (!modal) {
             setButtonCopy("Copy Link")
         }
     }, [modal])
@@ -94,11 +94,7 @@ export default function MainPage() {
     const isCurrentEmpty = tableScrapResult === 'newest' ? newProjectEmpty : updatedProjectEmpty;
 
     return (
-        <div className="w-full p-5 space-y-4">
-            <header className="p-2">
-                <h1 className="text-xl font-semibold">Announcement</h1>
-                <p className="text-sm text-slate-500">Scrape & filter project announcements</p>
-            </header>
+        <div className="w-full">
 
             <main className="w-full flex flex-col gap-5">
                 <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 space-y-4">
@@ -268,8 +264,8 @@ export default function MainPage() {
                                 <button
                                     onClick={() => handleChangeTableScrapResult('newest')}
                                     className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'newest'
-                                            ? 'bg-white shadow text-blue-600 font-semibold'
-                                            : 'text-slate-500 hover:text-slate-700'
+                                        ? 'bg-white shadow text-blue-600 font-semibold'
+                                        : 'text-slate-500 hover:text-slate-700'
                                         }`}
                                 >
                                     Newest
@@ -277,8 +273,8 @@ export default function MainPage() {
                                 <button
                                     onClick={() => handleChangeTableScrapResult('updated')}
                                     className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'updated'
-                                            ? 'bg-white shadow text-blue-600 font-semibold'
-                                            : 'text-slate-500 hover:text-slate-700'
+                                        ? 'bg-white shadow text-blue-600 font-semibold'
+                                        : 'text-slate-500 hover:text-slate-700'
                                         }`}
                                 >
                                     Updated
@@ -321,8 +317,8 @@ export default function MainPage() {
                             <>
                                 <header className="flex items-center gap-2 py-4 px-4 border-b border-slate-200">
                                     <div className={`p-2 rounded-full ${tableScrapResult === 'newest'
-                                            ? 'bg-green-200 text-green-600'
-                                            : 'bg-orange-200 text-orange-600'
+                                        ? 'bg-green-200 text-green-600'
+                                        : 'bg-orange-200 text-orange-600'
                                         }`}>
                                         {tableScrapResult === 'newest'
                                             ? <IconFolderOpen size={24} />

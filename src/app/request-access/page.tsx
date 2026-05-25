@@ -107,7 +107,7 @@ export default function RequestAccess() {
                             <div className={`flex gap-2 w-full rounded-md border border-slate-400 focus-within:ring-blue-500 bg-white text-slate-700 outline-none focus-within:ring-2 focus-within:border-transparent px-3 py-1.5 text-sm`}>
                                 <span className="text-slate-400">{<IconMessage size={24} />}</span>
 
-                                <textarea name="message" onChange={handleChange} placeholder="Tell us why you need to access this website!" className="w-full bg-transparent outline-none placeholder:text-slate-400 disabled:cursor-not-allowed min-h-20"></textarea>
+                                <textarea name="message" onChange={handleChange} placeholder="Tell us why you need to access this website!" className="w-full bg-transparent outline-none placeholder:text-slate-400 disabled:cursor-not-allowed min-h-20 max-h-60"></textarea>
                             </div>
                         </div>
                         <div className="w-full">
