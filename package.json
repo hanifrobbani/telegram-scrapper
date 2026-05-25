@@ -20,7 +20,8 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "tailwindcss-animate": "^1.0.7",
-    "telegram": "^2.26.22"
+    "telegram": "^2.26.22",
+    "zustand": "^5.0.13"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
