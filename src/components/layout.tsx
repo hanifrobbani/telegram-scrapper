@@ -4,6 +4,9 @@ import { useState } from "react";
 import ProjectPage from "@/components/pages/project";
 import TelegramGroupPage from "@/components/pages/telegram";
 import ScrapPage from "@/components/pages/scrapper";
+import AIReportPage from "@/components/pages/ai-report";
+import AISearchPage from "@/components/pages/ai-search";
+import AISummarizePage from "@/components/pages/ai-summarize";
 
 export default function LayoutPage() {
     const titlePage: any = {
@@ -18,7 +21,19 @@ export default function LayoutPage() {
         "telegram-group": {
             title: "List Telegram",
             description: "Add or update the existing telegram group to get scrap"
-        }
+        },
+        "ai-summarizer": {
+            title: "List Telegram",
+            description: "Add or update the existing telegram group to get scrap"
+        },
+        "ai-report": {
+            title: "List Telegram",
+            description: "Add or update the existing telegram group to get scrap"
+        },
+        "ai-search": {
+            title: "List Telegram",
+            description: "Add or update the existing telegram group to get scrap"
+        },
     }
     const [page, setPage] = useState<string>('scrapper')
 
@@ -26,7 +41,7 @@ export default function LayoutPage() {
         setPage(data)
     }
 
-    const activeTitlePage = titlePage[page]
+    const activeTitlePage = titlePage[page] ? titlePage[page] : ""
 
     return (
         <div className="flex bg-slate-50 font-sans h-screen overflow-hidden">
@@ -40,6 +55,9 @@ export default function LayoutPage() {
                 {page === 'scrapper' && <ScrapPage />}
                 {page === 'project' && <ProjectPage />}
                 {page === 'telegram-group' && <TelegramGroupPage />}
+                {page === 'ai-summarizer' && <AISummarizePage />}
+                {page === 'ai-search' && <AISearchPage />}
+                {page === 'ai-report' && <AIReportPage />}
             </main>
         </div>
     )

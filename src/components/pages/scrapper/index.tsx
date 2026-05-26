@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react"
 import Select from "../../ui/SelectOption"
-import { IconCategory, IconLink } from "@tabler/icons-react"
 import Input from "../../ui/Input"
 import Button from "../../ui/Button"
-import { IconRocket, IconFolderOpen, IconRefresh, IconBrandTelegram, IconMessage, IconChevronRightFilled, IconFolder, IconFileDescription, IconCalendarEvent, IconTag, IconFolderOff, IconRefreshOff } from "@tabler/icons-react"
+import { IconRocket, IconFolderOpen, IconRefresh, IconBrandTelegram, IconMessage, IconChevronRightFilled, IconFolder, IconFileDescription, IconCalendarEvent, IconTag, IconFolderOff, IconRefreshOff, IconClock, IconCategory, IconLink } from "@tabler/icons-react"
 import { useScrapMessageMutation } from "@/hooks/useScrapMessage"
 import { DataScrapperType } from "@/types/scrap.type"
 import LoadingBar from "../../ui/loadingBar"
@@ -253,22 +252,14 @@ export default function ScrapPage() {
 
                         {hasSourceData && !isPending && (
                             <div className="flex items-center bg-gray-200 p-1 rounded-xl w-fit">
-                                <button
-                                    onClick={() => handleChangeTableScrapResult('newest')}
-                                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'newest'
-                                        ? 'bg-white shadow text-blue-600 font-semibold'
-                                        : 'text-slate-500 hover:text-slate-700'
-                                        }`}
-                                >
+                                <button onClick={() => handleChangeTableScrapResult('newest')}
+                                    className={`flex items-center gap-1 px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'newest' ? 'bg-white shadow text-blue-600 font-semibold' : 'text-slate-500 hover:text-slate-700'}`}>
+                                    <IconFolderOpen size={16}/>
                                     Newest
                                 </button>
-                                <button
-                                    onClick={() => handleChangeTableScrapResult('updated')}
-                                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'updated'
-                                        ? 'bg-white shadow text-blue-600 font-semibold'
-                                        : 'text-slate-500 hover:text-slate-700'
-                                        }`}
-                                >
+                                <button onClick={() => handleChangeTableScrapResult('updated')}
+                                    className={`flex items-center gap-1 px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'updated' ? 'bg-white shadow text-blue-600 font-semibold' : 'text-slate-500 hover:text-slate-700'}`}>
+                                    <IconRefresh size={16}/>
                                     Updated
                                 </button>
                             </div>
