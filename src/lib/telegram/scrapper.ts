@@ -11,6 +11,8 @@ export interface AirdropMessage {
   text: string;
   replyToId: number | null;
   messageUrl: string;
+  scrapedAt: Date | string;
+  groupLink: string;
   entities: Api.TypeMessageEntity[];
 }
 
@@ -92,6 +94,8 @@ export async function scrapeChannel({
         text: msg.message,
         replyToId: replyTo?.replyToMsgId ?? null,
         messageUrl: `https://t.me/${username}/${msg.id}`,
+        scrapedAt: new Date (),
+        groupLink: `https://t.me/${username}`,
         entities,
       });
     }

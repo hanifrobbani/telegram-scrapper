@@ -10,8 +10,10 @@ export interface ScrapperItem {
     date: Date | string;
     text: string;
     type: string;
-    replyToId: boolean;
+    replyToId: number;
     messageUrl: string;
+    scrapedAt: Date | string;
+    groupLink: string;
     entities: [
         {
             className: string;
@@ -24,4 +26,8 @@ export interface ScrapperItem {
 export interface DataScrapperRespond {
     data: ScrapperItem[];
 
+}
+export interface DataScrapperSaveRespond {
+    message: string;
+    total: number;
 }
