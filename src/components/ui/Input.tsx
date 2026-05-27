@@ -12,7 +12,7 @@ interface InputProps {
     disabled?: boolean;
     required?: boolean;
     className?: string;
-    size?: string;
+    size?: "normal" | "large" | "small";
     isError?: boolean;
     errorMessage?: string;
 }
@@ -32,7 +32,7 @@ export default function Input({
     isError = false,
     errorMessage = ""
 }: InputProps) {
-    const inputSize = size === "large" ? "px-4 py-2" : "px-3 py-1.5 text-sm"
+    const inputSize = size === "large" ? "px-4 py-2" : size === "normal" ? "px-3 py-1.5 text-sm" : "px-2 py-1 text-xs"
     return (
         <>
             <div className={`flex items-center gap-2 w-full rounded-md ${isError ? "border-2 border-red-500 focus-within:ring-red-500" : "border border-slate-400 focus-within:ring-blue-500"} bg-white ${inputSize} text-slate-700 
