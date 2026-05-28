@@ -4,30 +4,25 @@ import Modal from "../../ui/modalDialog"
 import { useEffect, useState } from "react"
 import Button from "../../ui/Button"
 import { IconPlus, IconMoodConfuzedFilled, IconRotate } from "@tabler/icons-react"
-import Toaster from "../../ui/modalToaster"
 import { ModalCreateData, ModalUpdateData, ModalDeleteData } from "./ModalTelegramContent"
-import { ToasterType } from '@/types/toaster.type'
+import { ShowToast, ToasterItem } from "@/types/toaster.type"
 import { formTelegramGroup } from "@/types/telegram.type"
 
-export default function TelegramGroupPage() {
+type Props = {
+    showToast: ShowToast
+    toasts: ToasterItem[]
+}
+
+export default function TelegramGroupPage({ showToast, toasts }: Props) {
     const [modalContent, setmodalContent] = useState<'create' | 'delete' | 'update' | null>(null)
     const [itemSelected, setItemSelected] = useState<formTelegramGroup | null>(null)
     const [openModal, setOpenModal] = useState(false)
     const { telegramGroupData, isTelegramGroupError, isTelegramGroupLoading } = useGetTeleGroup()
-    const [toaster, setToaster] = useState<ToasterType>({
-        isOpen: false,
-        type: "success",
-        message: ""
-    })
 
     const handleOpenModal = (type: 'create' | 'delete' | 'update', itemSelected?: formTelegramGroup) => {
         setmodalContent(type)
         setOpenModal(true)
         if (itemSelected) setItemSelected(itemSelected)
-    }
-
-    const handleToaster = (data: ToasterType) => {
-        setToaster(data)
     }
 
     const handleModalClose = (data: boolean) => {
@@ -41,6 +36,13 @@ export default function TelegramGroupPage() {
             setOpenModal(true)
         }
     }, [modalContent])
+
+    const latestToast = toasts[toasts.length - 1]
+    useEffect(() => {
+        if (latestToast?.type === "success") {
+            setOpenModal(false)
+        }
+    }, [toasts])
 
     return (
         <div className="w-full">
@@ -125,21 +127,13 @@ export default function TelegramGroupPage() {
 
             <Modal isOpen={openModal} onClose={() => handleModalClose(false)} title={modalContent === 'create' ? "Add new Telegram Group" : modalContent === 'update' ? "Update Telegram Group" : "Delete Group?"}>
                 {modalContent == 'create' ? (
-                    <ModalCreateData ToasterData={handleToaster} ModalData={handleModalClose} />
+                    <ModalCreateData showToast={showToast} ModalData={handleModalClose} />
                 ) : modalContent == 'update' ? (
-                    <ModalUpdateData ToasterData={handleToaster} ModalData={handleModalClose} ItemSelected={itemSelected} />
+                    <ModalUpdateData showToast={showToast} ModalData={handleModalClose} ItemSelected={itemSelected} />
                 ) : (
-                    <ModalDeleteData ToasterData={handleToaster} ModalData={handleModalClose} ItemSelected={itemSelected}/>
+                    <ModalDeleteData showToast={showToast} ModalData={handleModalClose} ItemSelected={itemSelected} />
                 )}
             </Modal>
-            <Toaster
-                type={toaster.type}
-                message={toaster.message}
-                isOpen={toaster.isOpen}
-                onClose={() => setToaster(prev => ({ ...prev, isOpen: false }))}
-                autoClose={true}
-                duration={3000}
-            />
         </div>
     )
 }

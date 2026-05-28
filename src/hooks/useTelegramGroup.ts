@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { formTelegramGroup, telegramGroupRespond } from "@/types/telegram.type"
-import { useState } from 'react'
-import { ToasterType } from '@/types/toaster.type'
+import { ShowToast } from "@/types/toaster.type"
 
 export const useGetTeleGroup = () => {
     const { data, error, isLoading, isError } = useQuery<formTelegramGroup[]>({
@@ -12,9 +11,7 @@ export const useGetTeleGroup = () => {
     return { telegramGroupData: data, telegramGroupError: error, isTelegramGroupError: isError, isTelegramGroupLoading: isLoading }
 }
 
-export const useAddTelegramGroupMutation = () => {
-    const [toaster, setToaster] = useState<ToasterType>({ isOpen: false, type: "success", message: "" })
-
+export const useAddTelegramGroupMutation = (showToast: ShowToast) => {
     const queryClient = useQueryClient()
 
     const { mutate, isPending, isError, error } = useMutation<telegramGroupRespond, Error, formTelegramGroup>({
@@ -32,25 +29,19 @@ export const useAddTelegramGroupMutation = () => {
 
             return result
         },
-        onMutate: () => {
-            setToaster({ isOpen: false, type: "success", message: "" })
-        },
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['telegram_group'] })
-
-            setToaster({ isOpen: true, type: "success", message: data.message })
+            queryClient.invalidateQueries({ queryKey: ['projects'] })
+            showToast("success", data.message)
         }, onError: (error) => {
-            setToaster({ isOpen: true, type: "error", message: error.message })
+            showToast("error", error.message)
         }
 
     })
 
-    return { mutate, isPending, isError, error, toaster }
+    return { mutate, isPending, isError, error }
 }
 
-export const useUpdateTelegramGroupMutation = () => {
-    const [toaster, setToaster] = useState<ToasterType>({ isOpen: false, type: "success", message: "" })
-
+export const useUpdateTelegramGroupMutation = (showToast: ShowToast) => {
     const queryClient = useQueryClient()
 
     const { mutate, isPending, isError, error } = useMutation<telegramGroupRespond, Error, formTelegramGroup>({
@@ -68,26 +59,19 @@ export const useUpdateTelegramGroupMutation = () => {
 
             return result
         },
-        onMutate: () => {
-            setToaster({ isOpen: false, type: "success", message: "" })
-        },
-
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['telegram_group'] })
-
-            setToaster({ isOpen: true, type: "success", message: data.message })
+            queryClient.invalidateQueries({ queryKey: ['projects'] })
+            showToast("success", data.message)
         }, onError: (error) => {
-            setToaster({ isOpen: true, type: "error", message: error.message })
+            showToast("error", error.message)
         }
 
     })
 
-    return { mutate, isPending, isError, error, toaster }
+    return { mutate, isPending, isError, error }
 }
 
-export const useDeleteTelegramGroup = () => {
-    const [toaster, setToaster] = useState<ToasterType>({ isOpen: false, type: "success", message: "" })
-
+export const useDeleteTelegramGroup = (showToast: ShowToast) => {
     const queryClient = useQueryClient()
 
     const { mutate, isPending } = useMutation<telegramGroupRespond, Error, formTelegramGroup>({
@@ -105,19 +89,14 @@ export const useDeleteTelegramGroup = () => {
 
             return result
         },
-        onMutate: () => {
-            setToaster({ isOpen: false, type: "success", message: "" })
-        },
-
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['telegram_group'] })
-
-            setToaster({ isOpen: true, type: "success", message: data.message })
+            queryClient.invalidateQueries({ queryKey: ['projects'] })
+            showToast("success", data.message)
         }, onError: (error) => {
-            setToaster({ isOpen: true, type: "error", message: error.message })
+            showToast("error", error.message)
         }
 
     })
-    return { mutate, isPending, toaster }
+    return { mutate, isPending }
 
 }

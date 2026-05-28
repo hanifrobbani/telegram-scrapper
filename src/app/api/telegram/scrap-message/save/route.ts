@@ -1,20 +1,20 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/client";
 import { ScrapperItem } from "@/types/scrap.type";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
-        const body = await req.json();
-
-        const supabase = createClient();
+        const body = await req.json()
+        const supabase = createClient()
+        
         const groupLink = body.data[0].groupLink;
-        const { data: group } = await supabase.from("telegram_groups").select("id").eq("url_group", groupLink).single();
+        const { data: group } = await supabase.from("telegram_groups").select("id").eq("url_group", groupLink).single()
 
         if (!group) {
             return NextResponse.json(
                 { error: "Group not found" },
                 { status: 404 }
-            );
+            )
         }
 
         const mappedData = body.data.map((item: ScrapperItem) => ({
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
             message_text: item.text,
             message_url: item.messageUrl,
             scraped_at: item.scrapedAt,
-        }));
+        }))
 
         const { data, error } = await supabase.from("scrap_messages").insert(mappedData).select();
 
@@ -33,17 +33,17 @@ export async function POST(req: Request) {
             return NextResponse.json(
                 { error: error.message },
                 { status: 500 }
-            );
+            )
         }
 
         return NextResponse.json(
             { message: "Data successfully saved!", total: data.length, },
             { status: 201 }
-        );
+        )
     } catch (e) {
         return NextResponse.json(
             { error: "Internal server error" },
             { status: 500 }
-        );
+        )
     }
 }

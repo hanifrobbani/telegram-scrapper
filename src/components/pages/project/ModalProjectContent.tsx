@@ -4,29 +4,18 @@ import { formTelegramProject } from "@/types/telegram.type"
 import Input from "../../ui/Input"
 import Select from "../../ui/SelectOption"
 import { IconLink, IconLabelFilled, IconCategory } from "@tabler/icons-react"
-import { ToasterType } from '@/types/toaster.type'
 import Button from "../../ui/Button"
+import { ShowToast } from "@/types/toaster.type"
 
 type TypeModalProps = {
-    ToasterData: (data: ToasterType) => void
+    showToast: ShowToast
     ModalData: (data: boolean) => void
     ItemSelected?: formTelegramProject | null
 }
 
-export const ModalCreateData = ({ ToasterData, ModalData }: TypeModalProps) => {
+export const ModalCreateData = ({ ModalData, showToast }: TypeModalProps) => {
     const [form, setForm] = useState<formTelegramProject>({ url_project: '', project_name: '', type: 'airdrop' })
-    const { mutate, isError, isPending, toaster, error } = useAddProjectMutation()
-    const isFormFilled = Object.values(form).every(val => val.trim() !== "")
-
-    useEffect(() => {
-        if (!toaster.isOpen) return
-        if (toaster.type === "success" || (toaster.type === "error" && isFormFilled)) {
-            ModalData(false)
-            setTimeout(() => {
-                ToasterData(toaster)
-            }, 200)
-        }
-    }, [toaster])
+    const { mutate, isError, isPending, error } = useAddProjectMutation(showToast)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setForm(prev => ({
@@ -96,20 +85,9 @@ export const ModalCreateData = ({ ToasterData, ModalData }: TypeModalProps) => {
     )
 }
 
-export const ModalUpdateData = ({ ToasterData, ModalData, ItemSelected }: TypeModalProps) => {
+export const ModalUpdateData = ({ showToast, ModalData, ItemSelected }: TypeModalProps) => {
     const [form, setForm] = useState<formTelegramProject>({ url_project: ItemSelected?.url_project ?? '', project_name: ItemSelected?.project_name ?? '', type: ItemSelected?.type ?? '', id: ItemSelected?.id })
-    const { mutate, isError, isPending, toaster, error } = useUpdateProjectMutation()
-    const isFormFilled = Object.values(form).every(val => val.trim() !== "")
-
-    useEffect(() => {
-        if (!toaster.isOpen) return
-        if (toaster.type === "success" || (toaster.type === "error" && isFormFilled)) {
-            ModalData(false)
-            setTimeout(() => {
-                ToasterData(toaster)
-            }, 200)
-        }
-    }, [toaster])
+    const { mutate, isError, isPending, error } = useUpdateProjectMutation(showToast)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setForm(prev => ({
@@ -179,18 +157,9 @@ export const ModalUpdateData = ({ ToasterData, ModalData, ItemSelected }: TypeMo
     )
 }
 
-export const ModalDeleteData = ({ ToasterData, ModalData, ItemSelected }: TypeModalProps) => {
+export const ModalDeleteData = ({ showToast, ModalData, ItemSelected }: TypeModalProps) => {
     const [form, setForm] = useState<formTelegramProject>({ url_project: ItemSelected?.url_project ?? '', project_name: ItemSelected?.project_name ?? '', type: ItemSelected?.type ?? '', id: ItemSelected?.id })
-    const { mutate, isPending, toaster } = useDeleteProject()
-
-    useEffect(() => {
-        if (toaster.isOpen) {
-            ModalData(false)
-            setTimeout(() => {
-                ToasterData(toaster)
-            }, 200)
-        }
-    }, [toaster])
+    const { mutate, isPending } = useDeleteProject(showToast)
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()

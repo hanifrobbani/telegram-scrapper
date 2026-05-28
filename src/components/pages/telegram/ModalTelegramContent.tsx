@@ -5,30 +5,18 @@ import { useAddTelegramGroupMutation, useUpdateTelegramGroupMutation, useDeleteT
 import Input from "../../ui/Input"
 import Button from "../../ui/Button"
 import { IconLabelFilled, IconLink } from "@tabler/icons-react"
-import { ToasterType } from '@/types/toaster.type'
+import { ShowToast } from "@/types/toaster.type"
 
 type TypeModalProps = {
-    ToasterData: (data: ToasterType) => void
+    showToast: ShowToast
     ModalData: (data: boolean) => void
     ItemSelected?: formTelegramGroup | null
 }
 
-export const ModalCreateData = ({ ToasterData, ModalData }: TypeModalProps) => {
+export const ModalCreateData = ({ showToast, ModalData }: TypeModalProps) => {
 
     const [form, setForm] = useState<formTelegramGroup>({ url_group: '', title: '' })
-    const { mutate, isError, isPending, toaster, error } = useAddTelegramGroupMutation()
-    const isFormFilled = Object.values(form).every(val => val.trim() !== "")
-
-    useEffect(() => {
-        if (!toaster.isOpen) return
-        if (toaster.type === "success" || (toaster.type === "error" && isFormFilled)) {
-            ModalData(false)
-            setTimeout(() => {
-                ToasterData(toaster)
-            }, 200)
-        }
-    }, [toaster])
-
+    const { mutate, isError, isPending, error } = useAddTelegramGroupMutation(showToast)
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm(prev => ({
             ...prev,
@@ -88,21 +76,9 @@ export const ModalCreateData = ({ ToasterData, ModalData }: TypeModalProps) => {
     )
 }
 
-export const ModalUpdateData = ({ ToasterData, ModalData, ItemSelected }: TypeModalProps) => {
+export const ModalUpdateData = ({ showToast, ModalData, ItemSelected }: TypeModalProps) => {
     const [form, setForm] = useState<formTelegramGroup>({ url_group: ItemSelected?.url_group ?? '', title: ItemSelected?.title ?? '', id: ItemSelected?.id })
-    const { mutate, isError, isPending, toaster, error } = useUpdateTelegramGroupMutation()
-    const isFormFilled = Object.values(form).every(val => val.trim() !== "")
-
-    useEffect(() => {
-        if (!toaster.isOpen) return
-        if (toaster.type === "success" || (toaster.type === "error" && isFormFilled)) {
-            ModalData(false)
-            setTimeout(() => {
-                ToasterData(toaster)
-            }, 200)
-        }
-    }, [toaster])
-
+    const { mutate, isError, isPending, error } = useUpdateTelegramGroupMutation(showToast)
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm(prev => ({
             ...prev,
@@ -162,18 +138,9 @@ export const ModalUpdateData = ({ ToasterData, ModalData, ItemSelected }: TypeMo
     )
 }
 
-export const ModalDeleteData = ({ ToasterData, ModalData, ItemSelected }: TypeModalProps) => {
+export const ModalDeleteData = ({ showToast, ModalData, ItemSelected }: TypeModalProps) => {
     const [form, setForm] = useState<formTelegramGroup>({ url_group: ItemSelected?.url_group ?? '', title: ItemSelected?.title ?? '', id: ItemSelected?.id })
-    const { mutate, isPending, toaster } = useDeleteTelegramGroup()
-
-    useEffect(() => {
-        if (toaster.isOpen) {
-            ModalData(false)
-            setTimeout(() => {
-                ToasterData(toaster)
-            }, 200)
-        }
-    }, [toaster])
+    const { mutate, isPending } = useDeleteTelegramGroup(showToast)
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()

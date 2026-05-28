@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       endDate: new Date(endDate),
     });
 
-    return NextResponse.json({ data });
+    return NextResponse.json({ data, message: "Data scrapped successfully!" }, {status: 200});
   } catch (error) {
       const message = getErrorMessage(error);
     console.error("[scrape error]", error);

@@ -28,7 +28,5 @@ export const useScrapData =
                 newProjects,
                 updatedProjects,
             });
-        console.log("data kesimpan di global satte zustand: ", newProjects)
-        console.log("data kesimpan di global satte zustand: ", updatedProjects)
         },
     }));

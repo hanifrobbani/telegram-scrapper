@@ -168,7 +168,7 @@ export default function AISummarizePage() {
 
                             </div>
                             <div className="">
-                                <h1 className="font-semibold text-sm">Key Highlight.</h1>
+                                <h1 className="font-semibold text-sm">Key Highlight:</h1>
                                 <ul className="text-sm list-disc text-slate-600 px-4">
                                     <li><span className="font-semibold">Lorem ipsum</span> Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque, earum.</li>
                                     <li><span className="font-semibold">Lorem ipsum</span> Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque, earum.</li>

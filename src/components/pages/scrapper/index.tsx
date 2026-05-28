@@ -2,26 +2,31 @@ import { useEffect, useState } from "react"
 import Select from "../../ui/SelectOption"
 import Input from "../../ui/Input"
 import Button from "../../ui/Button"
-import { IconRocket, IconFolderOpen, IconRefresh, IconBrandTelegram, IconMessage, IconChevronRightFilled, IconFolder, IconFileDescription, IconCalendarEvent, IconTag, IconFolderOff, IconRefreshOff, IconClock, IconCategory, IconLink } from "@tabler/icons-react"
-import { useScrapMessageMutation } from "@/hooks/useScrapMessage"
+import { IconRocket, IconFolderOpen, IconRefresh, IconBrandTelegram, IconMessage, IconChevronRightFilled, IconFolder, IconFileDescription, IconCalendarEvent, IconTag, IconFolderOff, IconRefreshOff, IconFileDownloadFilled, IconCategory, IconLink } from "@tabler/icons-react"
+import { useScrapMessageMutation, useSaveScrapMessage } from "@/hooks/useScrapMessage"
 import { DataScrapperType } from "@/types/scrap.type"
 import LoadingBar from "../../ui/loadingBar"
 import { useGetTeleGroup } from "@/hooks/useTelegramGroup"
 import { ScrapperItem } from "@/types/scrap.type"
+import { ShowToast } from "@/types/toaster.type"
 import { truncateText } from "@/helper/formatText"
 import Image from "next/image"
 import Modal from "../../ui/modalDialog"
 import { formatDate, formatDateWIB } from "@/helper/formatDate"
-import Toaster from '@/components/ui/modalToaster'
 import { useFakeProgress } from "@/helper/fakeProgress"
 import { useScrapData } from "@/stores/useScrapData"
 
-export default function ScrapPage() {
+type Props = {
+    showToast: ShowToast
+}
+
+export default function ScrapPage({ showToast }: Props) {
     const [tableScrapResult, setTableScrapResult] = useState<string>('newest')
     const handleChangeTableScrapResult = (data: string) => {
         setTableScrapResult(data)
     }
-    const { mutate, error, isError, isPending, data, toaster, setToaster } = useScrapMessageMutation()
+    const { scrap, isScrappingPending, isScrappingError, scrappingError, scrapResult } = useScrapMessageMutation(showToast)
+    const { saveScrapData, isSaveScrapDataPending, isSaveScrapDataError, saveScrapDataError } = useSaveScrapMessage(showToast)
     const { telegramGroupData, isTelegramGroupError, isTelegramGroupLoading } = useGetTeleGroup()
     useEffect(() => {
         if (telegramGroupData && telegramGroupData.length > 0) {
@@ -36,7 +41,7 @@ export default function ScrapPage() {
     const [modal, setModal] = useState<boolean>(false)
     const [modalData, setModaldata] = useState<ScrapperItem | null>(null)
     const [buttonCopy, setButtonCopy] = useState<string>("Copy Link")
-    const loadingBarProgress = useFakeProgress(isPending)
+    const loadingBarProgress = useFakeProgress(isScrappingPending)
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData(prev => ({
             ...prev,
@@ -46,13 +51,20 @@ export default function ScrapPage() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        mutate(formData)
+        scrap(formData)
     }
-    useEffect(() => {
-        if (data && !isPending && !isError) {
-            setScrapData(data);
+
+    const handleSaveScrapData = () => {
+        if(!isScrappingPending && scrapResult){
+            saveScrapData(scrapResult)
         }
-    }, [data, isPending, isError]);
+    }
+
+    useEffect(() => {
+        if (scrapResult && !isScrappingPending && !isScrappingError) {
+            setScrapData(scrapResult);
+        }
+    }, [scrapResult, isScrappingPending, isScrappingError]);
 
     const newProjects = useScrapData((state) => state.newProjects);
     const updatedProjects = useScrapData((state) => state.updatedProjects);
@@ -122,6 +134,7 @@ export default function ScrapPage() {
                                 name="startDate"
                                 value={formData.startDate}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                         <div className="flex flex-col gap-1 w-full">
@@ -131,6 +144,7 @@ export default function ScrapPage() {
                                 name="endDate"
                                 value={formData.endDate}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
 
@@ -140,13 +154,13 @@ export default function ScrapPage() {
                                 label="Scrap"
                                 variant="primary"
                                 icon={<IconRocket size={24} />}
-                                loadingType={isPending}
+                                loadingType={isScrappingPending}
                             />
                         </div>
                     </form>
                 </div>
 
-                {isPending ? (
+                {isScrappingPending ? (
                     <div className="flex justify-between gap-5">
                         <div className="bg-blue-50 border border-slate-200 text-blue-600 p-5 rounded-xl shadow-md w-full flex justify-between gap-5 items-start">
                             <div className="flex justify-center">
@@ -250,24 +264,33 @@ export default function ScrapPage() {
                             <p className="text-sm text-slate-500">Final scrape result & filter by new or updated project</p>
                         </div>
 
-                        {hasSourceData && !isPending && (
-                            <div className="flex items-center bg-gray-200 p-1 rounded-xl w-fit">
-                                <button onClick={() => handleChangeTableScrapResult('newest')}
-                                    className={`flex items-center gap-1 px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'newest' ? 'bg-white shadow text-blue-600 font-semibold' : 'text-slate-500 hover:text-slate-700'}`}>
-                                    <IconFolderOpen size={16}/>
-                                    Newest
-                                </button>
-                                <button onClick={() => handleChangeTableScrapResult('updated')}
-                                    className={`flex items-center gap-1 px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'updated' ? 'bg-white shadow text-blue-600 font-semibold' : 'text-slate-500 hover:text-slate-700'}`}>
-                                    <IconRefresh size={16}/>
-                                    Updated
-                                </button>
+                        {hasSourceData && !isScrappingPending && (
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    type="button"
+                                    label="Save Scrap data"
+                                    icon={<IconFileDownloadFilled size={16} />}
+                                    onClick={() => handleSaveScrapData()}
+                                    loadingType={isSaveScrapDataPending}
+                                />
+                                <div className="flex items-center bg-gray-200 p-1 rounded-xl w-fit">
+                                    <button onClick={() => handleChangeTableScrapResult('newest')}
+                                        className={`flex items-center gap-1 px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'newest' ? 'bg-white shadow text-blue-600 font-semibold' : 'text-slate-500 hover:text-slate-700'}`}>
+                                        <IconFolderOpen size={16} />
+                                        Newest
+                                    </button>
+                                    <button onClick={() => handleChangeTableScrapResult('updated')}
+                                        className={`flex items-center gap-1 px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${tableScrapResult === 'updated' ? 'bg-white shadow text-blue-600 font-semibold' : 'text-slate-500 hover:text-slate-700'}`}>
+                                        <IconRefresh size={16} />
+                                        Updated
+                                    </button>
+                                </div>
                             </div>
                         )}
                     </header>
 
                     <div className="w-full border border-slate-200 rounded-xl shadow bg-white">
-                        {isPending ? (
+                        {isScrappingPending ? (
                             <div className="flex justify-center items-center p-10">
                                 <div className="space-y-5">
                                     <div className="flex gap-4">
@@ -443,15 +466,6 @@ export default function ScrapPage() {
                     </div>
                 </div>
             </Modal>
-
-            <Toaster
-                type={toaster.type}
-                message={toaster.message}
-                isOpen={toaster.isOpen}
-                onClose={() => setToaster(prev => ({ ...prev, isOpen: false }))}
-                autoClose={true}
-                duration={3000}
-            />
 
         </div>
     )

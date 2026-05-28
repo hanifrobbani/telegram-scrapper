@@ -4,29 +4,24 @@ import { useState, useEffect } from "react"
 import Modal from "../../ui/modalDialog"
 import Button from "../../ui/Button"
 import { IconPlus, IconMoodConfuzedFilled, IconRotate } from "@tabler/icons-react"
-import Toaster from "../../ui/modalToaster"
-import { ToasterType } from '@/types/toaster.type'
+import { ShowToast, ToasterItem } from "@/types/toaster.type"
 import { formTelegramProject } from "@/types/telegram.type"
 import { ModalCreateData, ModalDeleteData, ModalUpdateData } from "./ModalProjectContent"
 
-export default function ProjectPage() {
+type Props = {
+    showToast: ShowToast
+    toasts: ToasterItem[]
+}
+
+export default function ProjectPage({ showToast, toasts }: Props ) {
     const { data, isError, isLoading } = useGetProject()
     const [modalContent, setmodalContent] = useState<'create' | 'delete' | 'update' | null>(null)
     const [itemSelected, setItemSelected] = useState<formTelegramProject | null>(null)
     const [openModal, setOpenModal] = useState(false)
-    const [toaster, setToaster] = useState<ToasterType>({
-        isOpen: false,
-        type: "success",
-        message: ""
-    })
     const handleOpenModal = (type: 'create' | 'delete' | 'update', itemSelected?: formTelegramProject) => {
         setmodalContent(type)
         setOpenModal(true)
         if (itemSelected) setItemSelected(itemSelected)
-    }
-
-    const handleToaster = (data: ToasterType) => {
-        setToaster(data)
     }
 
     const handleModalClose = (data: boolean) => {
@@ -41,6 +36,14 @@ export default function ProjectPage() {
             setOpenModal(true)
         }
     }, [modalContent])
+    
+    const latestToast = toasts[toasts.length - 1]
+    useEffect(() => {
+        if (latestToast?.type === "success") {
+            setOpenModal(false)
+        }
+    }, [toasts])
+
 
     return (
         <div className="w-full">
@@ -126,22 +129,13 @@ export default function ProjectPage() {
 
             <Modal isOpen={openModal} onClose={() => handleModalClose(false)} title={modalContent === 'create' ? "Add new Project" : modalContent === 'update' ? "Update Project" : "Delete Project?"}>
                 {modalContent == 'create' ? (
-                    <ModalCreateData ToasterData={handleToaster} ModalData={handleModalClose} />
+                    <ModalCreateData showToast={showToast} ModalData={handleModalClose} />
                 ) : modalContent == 'update' ? (
-                    <ModalUpdateData ToasterData={handleToaster} ModalData={handleModalClose} ItemSelected={itemSelected} />
+                    <ModalUpdateData showToast={showToast} ModalData={handleModalClose} ItemSelected={itemSelected} />
                 ) : (
-                    <ModalDeleteData ToasterData={handleToaster} ModalData={handleModalClose} ItemSelected={itemSelected} />
+                    <ModalDeleteData showToast={showToast} ModalData={handleModalClose} ItemSelected={itemSelected} />
                 )}
             </Modal>
-
-            <Toaster
-                type={toaster.type}
-                message={toaster.message}
-                isOpen={toaster.isOpen}
-                onClose={() => setToaster(prev => ({ ...prev, isOpen: false }))}
-                autoClose={true}
-                duration={3000}
-            />
         </div>
     )
 }

@@ -25,7 +25,7 @@ export interface ScrapperItem {
 
 export interface DataScrapperRespond {
     data: ScrapperItem[];
-
+    message: string;
 }
 export interface DataScrapperSaveRespond {
     message: string;
