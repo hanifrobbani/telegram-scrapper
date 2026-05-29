@@ -39,13 +39,13 @@ export default function Sidebar({ setPageUser }: SidebarProps) {
 
     return (
         <>
-            <div className="bg-slate-900 h-full min-w-60 pl-0.5 space-y-4 text-slate-200 flex flex-col justify-between">
+            <div className="bg-slate-900 h-full min-w-40 pl-0.5 space-y-4 text-slate-200 flex flex-col justify-between">
                 <div className="">
                     <div className="p-4">
                         <div className="flex items-start gap-2">
-                            <Image src={'/telegram.png'} width={35} height={35} alt="telegram icon" />
+                            <Image src={'/telegram.png'} width={30} height={30} alt="telegram icon" />
                             <div className="flex flex-col">
-                                <h1 className="font-semibold text-lg">Telegram Scrapper</h1>
+                                <h1 className="font-semibold">Telegram Scrapper</h1>
                                 <p className="text-gray-300 text-sm">airdrop tracker</p>
                             </div>
                         </div>

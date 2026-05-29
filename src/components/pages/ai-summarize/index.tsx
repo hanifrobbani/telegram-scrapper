@@ -136,7 +136,7 @@ export default function AISummarizePage() {
                         </div>
                     </div>
                     <div className="w-full p-5">
-                        <header className="flex justify-between">
+                        <header className="flex justify-between mb-2">
                             <h1 className="font-semibold">AI Summary</h1>
                             <div className="flex gap-4">
                                 <Button

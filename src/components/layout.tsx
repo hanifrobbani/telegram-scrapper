@@ -25,16 +25,16 @@ export default function LayoutPage() {
             description: "Add or update the existing telegram group to get scrap"
         },
         "ai-summarizer": {
-            title: "List Telegram",
-            description: "Add or update the existing telegram group to get scrap"
+            title: "AI Summary",
+            description: "Generate summary from scrapped telegram messages powered by AI"
         },
         "ai-report": {
-            title: "List Telegram",
-            description: "Add or update the existing telegram group to get scrap"
+            title: "AI Report",
+            description: "Generate a data report for the selected time period from your scraped data."
         },
         "ai-search": {
-            title: "List Telegram",
-            description: "Add or update the existing telegram group to get scrap"
+            title: "Smart Search",
+            description: "AI-powered search to find projects and relevant messages fomr scrapped data"
         },
     }
     const [page, setPage] = useState<string>('scrapper')
