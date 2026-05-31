@@ -268,7 +268,7 @@ export default function ScrapPage({ showToast }: Props) {
                             <div className="flex items-center gap-2">
                                 <Button
                                     type="button"
-                                    label="Save Scrap data"
+                                    label="Save Scrap Data"
                                     icon={<IconFileDownloadFilled size={16} />}
                                     onClick={() => handleSaveScrapData()}
                                     loadingType={isSaveScrapDataPending}
