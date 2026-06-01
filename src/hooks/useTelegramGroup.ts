@@ -30,7 +30,7 @@ export const useAddTelegramGroupMutation = (showToast: ShowToast) => {
             return result
         },
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['projects'] })
+            queryClient.invalidateQueries({ queryKey: ['telegram_group'] })
             showToast("success", data.message)
         }, onError: (error) => {
             showToast("error", error.message)
@@ -60,7 +60,7 @@ export const useUpdateTelegramGroupMutation = (showToast: ShowToast) => {
             return result
         },
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['projects'] })
+            queryClient.invalidateQueries({ queryKey: ['telegram_group'] })
             showToast("success", data.message)
         }, onError: (error) => {
             showToast("error", error.message)
@@ -90,7 +90,7 @@ export const useDeleteTelegramGroup = (showToast: ShowToast) => {
             return result
         },
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['projects'] })
+            queryClient.invalidateQueries({ queryKey: ['telegram_group'] })
             showToast("success", data.message)
         }, onError: (error) => {
             showToast("error", error.message)
