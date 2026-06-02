@@ -1,5 +1,5 @@
 import { useGetTeleGroup } from "@/hooks/useTelegramGroup"
-import TableSkeleton from "../../ui/tableSkeleton"
+import TableSkeleton from "../../ui/loader/tableSkeleton"
 import Modal from "../../ui/modalDialog"
 import { useEffect, useState } from "react"
 import Button from "../../ui/Button"

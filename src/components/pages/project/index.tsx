@@ -1,5 +1,5 @@
 import { useGetProject } from "@/hooks/useProject"
-import TableSkeleton from "../../ui/tableSkeleton"
+import TableSkeleton from "../../ui/loader/tableSkeleton"
 import { useState, useEffect } from "react"
 import Modal from "../../ui/modalDialog"
 import Button from "../../ui/Button"
