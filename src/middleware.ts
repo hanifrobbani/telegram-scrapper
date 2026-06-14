@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyAccessToken } from '@/lib/auth/jwt'
 
 const authRoutes = ['/login', '/request-access']
+const publicApiRoutes = ['/api/auth/login', '/api/auth/req-access']
 
 export async function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl
@@ -12,6 +13,10 @@ export async function middleware(req: NextRequest) {
     const isAuthRoute = authRoutes.includes(pathname)
 
     let isAuthenticated = false
+
+    if (publicApiRoutes.includes(pathname)) {
+        return NextResponse.next()
+    }
 
     // verify access token
     if (accessToken) {
@@ -55,7 +60,9 @@ export async function middleware(req: NextRequest) {
     if (isAuthRoute && isAuthenticated) {
         return NextResponse.redirect(new URL('/', req.url))
     }
-
+    if (pathname.startsWith('/api/') && !isAuthenticated) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     if (!isAuthRoute && !isAuthenticated) {
         return NextResponse.redirect(new URL('/login', req.url))
     }
@@ -64,5 +71,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\..*).*)',],
+    matcher: ['/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\..*).*)',],
 }
