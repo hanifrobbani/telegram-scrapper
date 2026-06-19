@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyAccessToken } from '@/lib/auth/jwt'
 
 const authRoutes = ['/login', '/request-access']
-const publicApiRoutes = ['/api/auth/login', '/api/auth/req-access']
+const publicApiRoutes = ['/api/auth/login', '/api/auth/req-access', '/api/auth/refresh']
+
+const MIDDLEWARE_SECRET = process.env.MIDDLEWARE_SECRET!
 
 export async function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl
@@ -34,10 +36,11 @@ export async function middleware(req: NextRequest) {
                     method: 'POST',
                     headers: {
                         cookie: req.headers.get('cookie') || '',
+                        'x-middleware-secret': MIDDLEWARE_SECRET
                     },
                 }
             )
-
+            console.log("fetch refresh token...")
             if (refreshResponse.ok) {
                 const response = NextResponse.next()
 
