@@ -4,7 +4,7 @@ type SidebarProps = {
 
 import Image from "next/image"
 import { useState } from "react"
-import { IconFolderFilled, IconUsersGroup, IconDatabaseExport, IconLogout, IconSparkles, IconChevronDown, IconFileSearch, IconChartPieFilled, IconFileAnalyticsFilled } from '@tabler/icons-react';
+import { IconFolderFilled, IconUsersGroup, IconDatabaseExport, IconLogout, IconChevronUp, IconSparkles, IconChevronDown, IconFileSearch, IconChartPieFilled, IconFileAnalyticsFilled } from '@tabler/icons-react';
 import Button from "./ui/Button";
 import Modal from "./ui/modalDialog";
 
@@ -95,17 +95,16 @@ export default function Sidebar({ setPageUser }: SidebarProps) {
                         </div>
                     </div>
                 </div>
-                <div className="w-full p-10">
-                    <div className="flex justify-center w-full border border-red-500 bg-red-600/10 hover:bg-red-600/20 rounded-md transition-colors">
-                        <Button
-                            label="Logout"
-                            size="large"
-                            type="button"
-                            icon={<IconLogout size={22} />}
-                            variant="custom"
-                            className="text-red-500"
-                            onClick={() => setOpenModal(true)}
-                        />
+                <div className="w-full p-2 hover:bg-gray-800 cursor-pointer">
+                    <div className="flex gap-2 items-center">
+                        <div className="w-8 h-8 rounded-full bg-black" />
+                        <div className="flex flex-col">
+                            <h1 className="text-sm text-slate-200 font-semibold">Admin</h1>
+                            <p className="text-xs text-slate-400">emailadmin@gmail.com</p>
+                        </div>
+                        <div className="text-slate-200 flex items-center">
+                        <IconChevronUp size={16}/>
+                        </div>
                     </div>
                 </div>
             </div>
