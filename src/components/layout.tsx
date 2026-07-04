@@ -8,7 +8,9 @@ import AIReportPage from "@/components/pages/ai-report";
 import AISearchPage from "@/components/pages/ai-search";
 import AISummarizePage from "@/components/pages/ai-summarize";
 import Toaster from "./ui/modalToaster";
-import { ToasterItem, ToastVariant, ShowToast } from "@/types/toaster.type";
+import { ToasterItem, ShowToast } from "@/types/toaster.type";
+import { IconSettings, IconLogout, IconUserCog, IconChevronRight, IconMoon } from '@tabler/icons-react';
+import { DropdownMenu } from "@/components/ui/DropdownMenu";
 
 export default function LayoutPage() {
     const titlePage: any = {
@@ -34,7 +36,7 @@ export default function LayoutPage() {
         },
         "ai-search": {
             title: "Smart Search",
-            description: "AI-powered search to find projects and relevant messages fomr scrapped data"
+            description: "AI-powered search to find projects and relevant messages from scrapped data"
         },
     }
     const [page, setPage] = useState<string>('scrapper')
@@ -62,15 +64,57 @@ export default function LayoutPage() {
     return (
         <div className="flex bg-slate-50 font-sans h-screen overflow-hidden">
             <Sidebar setPageUser={handleChangePage} />
-            <main className="flex-1 overflow-y-auto p-5 space-y-4">
-                <header className="p-2">
-                    <h1 className="text-xl font-semibold">{activeTitlePage.title}</h1>
-                    <p className="text-sm text-slate-500">{activeTitlePage.description}</p>
+            <main className="flex-1 overflow-y-auto px-5 space-y-4">
+                <header className="p-2 flex justify-between items-center">
+                    <div className="">
+                        <h1 className="text-xl font-semibold">{activeTitlePage.title}</h1>
+                        <p className="text-sm text-slate-500">{activeTitlePage.description}</p>
+                    </div>
+                    <div className="">
+                        <DropdownMenu
+                            align="left"
+                            trigger={
+                                <div className="bg-white p-2 rounded-md shadow-sm text-slate-600 hover:bg-gray-100 cursor-pointer transition-colors">
+                                    <IconSettings size={22} />
+                                </div>
+                            }>
+                            <div className="flex items-center gap-3 px-4 py-4">
+                                <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold">
+                                    N
+                                </div>
+                                <div>
+                                    <p className="text-sm font-semibold text-slate-800">Nick Admin</p>
+                                    <p className="text-xs text-slate-500">admin@example.com</p>
+                                </div>
+                            </div>
+
+                            <div className="border-t border-gray-100" />
+
+                            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors text-left cursor-pointer">
+                                <IconUserCog size={20} className="text-slate-500" />
+                                <div className="flex-1">
+                                    <p className="text-sm font-medium text-slate-700">User Settings</p>
+                                    <p className="text-xs text-slate-400">Manage your profile and preferences</p>
+                                </div>
+                                <IconChevronRight size={16} className="text-slate-400" />
+                            </button>
+
+                            <div className="border-t border-gray-100" />
+
+                            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 transition-colors text-left text-red-500 cursor-pointer">
+                                <IconLogout size={20} />
+                                <div>
+                                    <p className="text-sm font-medium">Logout</p>
+                                    <p className="text-xs text-red-500">Sign out from your account</p>
+                                </div>
+                            </button>
+                        </DropdownMenu>
+                    </div>
                 </header>
 
-                {page === 'scrapper' && <ScrapPage showToast={showToast}/>}
-                {page === 'project' && <ProjectPage showToast={showToast} toasts={toasts}/>}
-                {page === 'telegram-group' && <TelegramGroupPage showToast={showToast} toasts={toasts}/>}
+                {page === 'scrapper' && <ScrapPage showToast={showToast} />}
+                {page === 'project' && <ProjectPage showToast={showToast} toasts={toasts} />}
+                {page === 'telegram-group' && <TelegramGroupPage showToast={showToast} toasts={toasts} />}
                 {page === 'ai-summarizer' && <AISummarizePage />}
                 {page === 'ai-search' && <AISearchPage />}
                 {page === 'ai-report' && <AIReportPage />}

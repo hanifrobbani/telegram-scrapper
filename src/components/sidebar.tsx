@@ -95,18 +95,6 @@ export default function Sidebar({ setPageUser }: SidebarProps) {
                         </div>
                     </div>
                 </div>
-                <div className="w-full p-2 hover:bg-gray-800 cursor-pointer">
-                    <div className="flex gap-2 items-center">
-                        <div className="w-8 h-8 rounded-full bg-black" />
-                        <div className="flex flex-col">
-                            <h1 className="text-sm text-slate-200 font-semibold">Admin</h1>
-                            <p className="text-xs text-slate-400">emailadmin@gmail.com</p>
-                        </div>
-                        <div className="text-slate-200 flex items-center">
-                        <IconChevronUp size={16}/>
-                        </div>
-                    </div>
-                </div>
             </div>
             <Modal isOpen={openModal} onClose={() => setOpenModal(false)} title="Logout?" size="small">
                 <div className="px-4 pb-4 space-y-4">
