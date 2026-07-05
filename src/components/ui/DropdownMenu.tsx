@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, ReactNode } from "react";
+import React, { useState, useRef, useEffect, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface DropdownMenuProps {
@@ -6,6 +6,7 @@ interface DropdownMenuProps {
     children: ReactNode;
     align?: "left" | "right";
     className?: string;
+    childButtonCLose?: boolean
 }
 
 export function DropdownMenu({
@@ -28,7 +29,19 @@ export function DropdownMenu({
     }, []);
 
     const positionClass = align === "left" ? "right-0 origin-top-right" : "left-0 origin-top-left";
-
+    const enhancedChildren = React.Children.map(children, (child) => {
+        if ( React.isValidElement<React.ButtonHTMLAttributes<HTMLButtonElement>>(child) && child.type === "button") {
+            const originalOnClick = child.props.onClick;
+            return React.cloneElement(child, {
+                onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
+                    originalOnClick?.(e);
+                    setIsOpen(false);
+                },
+            });
+        }
+        return child;
+    });
+    
     return (
         <div className="relative" ref={dropdownRef}>
             <div onClick={() => setIsOpen((prev) => !prev)}>{trigger}</div>
@@ -42,7 +55,7 @@ export function DropdownMenu({
                         transition={{ duration: 0.15, ease: "easeOut" }}
                         className={`absolute top-full mt-1 ${positionClass} ${className} bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden`}
                     >
-                        <div className="relative">{children}</div>
+                        <div className="relative">{enhancedChildren}</div>
                     </motion.div>
                 )}
             </AnimatePresence>

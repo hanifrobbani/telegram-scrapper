@@ -1,12 +1,13 @@
 'use client'
 import Sidebar from "@/components/sidebar";
 import { useState } from "react";
-import ProjectPage from "@/components/pages/project";
-import TelegramGroupPage from "@/components/pages/telegram";
-import ScrapPage from "@/components/pages/scrapper";
-import AIReportPage from "@/components/pages/ai-report";
-import AISearchPage from "@/components/pages/ai-search";
+import ProjectPage from "./pages/project";
+import TelegramGroupPage from "./pages/telegram";
+import ScrapPage from "./pages/scrapper";
+import AIReportPage from "./pages/ai-report";
+import AISearchPage from "./pages/ai-search";
 import AISummarizePage from "@/components/pages/ai-summarize";
+import UserSettingsPage from "./pages/user-settings";
 import Toaster from "./ui/modalToaster";
 import { ToasterItem, ShowToast } from "@/types/toaster.type";
 import { IconSettings, IconLogout, IconUserCog, IconChevronRight, IconMoon } from '@tabler/icons-react';
@@ -37,6 +38,10 @@ export default function LayoutPage() {
         "ai-search": {
             title: "Smart Search",
             description: "AI-powered search to find projects and relevant messages from scrapped data"
+        },
+        "user-settings": {
+            title: "User Profile",
+            description: "Setting up your main profile account"
         },
     }
     const [page, setPage] = useState<string>('scrapper')
@@ -90,7 +95,7 @@ export default function LayoutPage() {
 
                             <div className="border-t border-gray-100" />
 
-                            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors text-left cursor-pointer">
+                            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors text-left cursor-pointer" onClick={() => setPage('user-settings')}>
                                 <IconUserCog size={20} className="text-slate-500" />
                                 <div className="flex-1">
                                     <p className="text-sm font-medium text-slate-700">User Settings</p>
@@ -118,6 +123,7 @@ export default function LayoutPage() {
                 {page === 'ai-summarizer' && <AISummarizePage />}
                 {page === 'ai-search' && <AISearchPage />}
                 {page === 'ai-report' && <AIReportPage />}
+                {page === 'user-settings' && <UserSettingsPage />}
 
                 {toasts.map(toast => (
                     <Toaster
