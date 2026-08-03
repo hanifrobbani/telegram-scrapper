@@ -1,12 +1,11 @@
 type SidebarProps = {
     setPageUser: (page: string) => void
+    onChangePage: (page: string) => void
 }
 
 import Image from "next/image"
 import { useState } from "react"
 import { IconFolderFilled, IconUsersGroup, IconDatabaseExport, IconLogout, IconChevronUp, IconSparkles, IconChevronDown, IconFileSearch, IconChartPieFilled, IconFileAnalyticsFilled } from '@tabler/icons-react';
-import Button from "./ui/Button";
-import Modal from "./ui/modalDialog";
 
 export default function Sidebar({ setPageUser }: SidebarProps) {
     const aiTools = [
@@ -17,24 +16,10 @@ export default function Sidebar({ setPageUser }: SidebarProps) {
 
     const [aiToolsOpen, setAiToolsOpen] = useState(false);
     const [page, setPage] = useState('scrapper')
-    const [openModal, setOpenModal] = useState<boolean>(false)
-    const [loading, setLoading] = useState<boolean>(false)
 
     const handleClickPage = (page: string) => {
         setPage(page)
         setPageUser(page)
-    }
-
-    const handleLogout = async () => {
-        setLoading(true)
-        const res = await fetch('/api/auth/logout', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-        })
-        if (res.ok) {
-            setLoading(false)
-            window.location.href = "/login"
-        }
     }
 
     return (
@@ -96,28 +81,6 @@ export default function Sidebar({ setPageUser }: SidebarProps) {
                     </div>
                 </div>
             </div>
-            <Modal isOpen={openModal} onClose={() => setOpenModal(false)} title="Logout?" size="small">
-                <div className="px-4 pb-4 space-y-4">
-                    <div className="text-slate-600 text-sm text-center">
-                        <p>Are you sure want to logout?</p>
-                    </div>
-                    <div className="flex gap-2 justify-center">
-                        <Button
-                            type="button"
-                            label="Cancel"
-                            variant="secondary-red"
-                            onClick={() => setOpenModal(false)}
-                        />
-                        <Button
-                            type="button"
-                            label="Logout"
-                            variant="primary-red"
-                            loadingType={loading}
-                            onClick={handleLogout}
-                        />
-                    </div>
-                </div>
-            </Modal>
         </>
     )
 }

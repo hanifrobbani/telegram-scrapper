@@ -12,6 +12,8 @@ import Toaster from "./ui/modalToaster";
 import { ToasterItem, ShowToast } from "@/types/toaster.type";
 import { IconSettings, IconLogout, IconUserCog, IconChevronRight, IconMoon } from '@tabler/icons-react';
 import { DropdownMenu } from "@/components/ui/DropdownMenu";
+import Modal from "@/components/ui/modalDialog"
+import Button from "./ui/Button";
 
 export default function LayoutPage() {
     const titlePage: any = {
@@ -66,9 +68,24 @@ export default function LayoutPage() {
         }, 3000)
     }
 
+    const [openModal, setOpenModal] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
+
+    const handleLogout = async () => {
+        setLoading(true)
+        const res = await fetch('/api/auth/logout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+        })
+        if (res.ok) {
+            setLoading(false)
+            window.location.href = "/login"
+        }
+    }
+
     return (
         <div className="flex bg-slate-50 font-sans h-screen overflow-hidden">
-            <Sidebar setPageUser={handleChangePage} />
+            <Sidebar setPageUser={handleChangePage} onChangePage={handleChangePage} />
             <main className="flex-1 overflow-y-auto px-5 space-y-4">
                 <header className="p-2 flex justify-between items-center">
                     <div className="">
@@ -106,7 +123,7 @@ export default function LayoutPage() {
 
                             <div className="border-t border-gray-100" />
 
-                            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 transition-colors text-left text-red-500 cursor-pointer">
+                            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 transition-colors text-left text-red-500 cursor-pointer" onClick={() => setOpenModal(true)}>
                                 <IconLogout size={20} />
                                 <div>
                                     <p className="text-sm font-medium">Logout</p>
@@ -141,6 +158,29 @@ export default function LayoutPage() {
                     />
                 ))}
             </main>
+
+            <Modal isOpen={openModal} onClose={() => setOpenModal(false)} title="Logout?" size="small">
+                <div className="px-4 pb-4 space-y-4">
+                    <div className="text-slate-600 text-sm text-center">
+                        <p>Are you sure want to logout?</p>
+                    </div>
+                    <div className="flex gap-2 justify-center">
+                        <Button
+                            type="button"
+                            label="Cancel"
+                            variant="secondary-red"
+                            onClick={() => setOpenModal(false)}
+                        />
+                        <Button
+                            type="button"
+                            label="Logout"
+                            variant="primary-red"
+                            loadingType={loading}
+                            onClick={handleLogout}
+                        />
+                    </div>
+                </div>
+            </Modal>
         </div>
     )
 }

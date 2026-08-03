@@ -69,63 +69,66 @@ export default function UserSettingsPage() {
                 </div>
 
                 {/* Account Settings & Quick Actions */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                    <div className="lg:col-span-2 w-full bg-white rounded-sm shadow-sm px-5 py-3 flex flex-col gap-4 h-fit">
-                        <header className="border-b border-slate-300">
-                            <h1 className="font-semibold text-slate-700 text-lg">Account Settings</h1>
-                        </header>
+                <div className="flex justify-between gap-5 w-full">
 
-                        <div className="flex flex-col divide-y divide-slate-200">
-                            <div className="flex items-center justify-between gap-4 py-3 first:pt-0">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-sm bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                                        <IconPencil size={20} />
+                    <div className="h-full flex flex-col gap-4 w-3/4">
+                        <div className="lg:col-span-2 w-full bg-white rounded-sm shadow-sm px-5 py-3 flex flex-col gap-4 h-fit">
+                            <header className="border-b border-slate-300">
+                                <h1 className="font-semibold text-slate-700 text-lg">Account Settings</h1>
+                            </header>
+
+                            <div className="flex flex-col divide-y divide-slate-200">
+                                <div className="flex items-center justify-between gap-4 py-3 first:pt-0">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-sm bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                                            <IconPencil size={20} />
+                                        </div>
+                                        <div className="">
+                                            <p className="font-semibold text-sm text-slate-700">Edit Profile</p>
+                                            <p className="text-sm text-slate-500">Update your name, email, and profile information</p>
+                                        </div>
                                     </div>
-                                    <div className="">
-                                        <p className="font-semibold text-sm text-slate-700">Edit Profile</p>
-                                        <p className="text-sm text-slate-500">Update your name, email, and profile information</p>
-                                    </div>
+                                    <Button label="Update" type="button" variant="secondary" icon={<IconPencil size={18} />} />
                                 </div>
-                                <Button label="Update" type="button" variant="secondary" icon={<IconPencil size={18} />} />
+
+                                <div className="flex items-center justify-between gap-4 py-3">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-sm bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                                            <IconLock size={20} />
+                                        </div>
+                                        <div className="">
+                                            <p className="font-semibold text-sm text-slate-700">Change Password</p>
+                                            <p className="text-sm text-slate-500">Update your password to keep your account secure</p>
+                                        </div>
+                                    </div>
+                                    <Button label="Change" type="button" variant="secondary" icon={<IconPencil size={18} />} />
+                                </div>
+
+                                <div className="flex items-center justify-between gap-4 py-3">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-sm bg-green-50 text-green-600 flex items-center justify-center shrink-0">
+                                            <IconBell size={20} />
+                                        </div>
+                                        <div className="">
+                                            <p className="font-semibold text-sm text-slate-700">Notification Preferences</p>
+                                            <p className="text-sm text-slate-500">Manage how you receive notifications</p>
+                                        </div>
+                                    </div>
+                                    <Button label="Manage" type="button" variant="secondary" icon={<IconPencil size={18} />} />
+                                </div>
                             </div>
+                        </div>
+                        <div className="w-full bg-white rounded-sm shadow-sm border border-red-200 px-5 py-3 flex flex-col gap-4">
+                            <header className="border-b border-red-200">
+                                <h1 className="font-semibold text-red-600 text-lg">Danger Zone</h1>
+                            </header>
 
-                            <div className="flex items-center justify-between gap-4 py-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-sm bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                                        <IconLock size={20} />
-                                    </div>
-                                    <div className="">
-                                        <p className="font-semibold text-sm text-slate-700">Change Password</p>
-                                        <p className="text-sm text-slate-500">Update your password to keep your account secure</p>
-                                    </div>
+                            <div className="flex items-center justify-between gap-4">
+                                <div className="">
+                                    <p className="font-semibold text-sm text-slate-700">Delete Account</p>
+                                    <p className="text-sm text-slate-500">Permanently delete your account and all associated data.</p>
                                 </div>
-                                <Button label="Change" type="button" variant="secondary" icon={<IconPencil size={18} />} />
-                            </div>
-
-                            <div className="flex items-center justify-between gap-4 py-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-sm bg-green-50 text-green-600 flex items-center justify-center shrink-0">
-                                        <IconBell size={20} />
-                                    </div>
-                                    <div className="">
-                                        <p className="font-semibold text-sm text-slate-700">Notification Preferences</p>
-                                        <p className="text-sm text-slate-500">Manage how you receive notifications</p>
-                                    </div>
-                                </div>
-                                <Button label="Manage" type="button" variant="secondary" icon={<IconPencil size={18} />} />
-                            </div>
-
-                            <div className="flex items-center justify-between gap-4 py-3 last:pb-0">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-sm bg-red-50 text-red-600 flex items-center justify-center shrink-0">
-                                        <IconPalette size={20} />
-                                    </div>
-                                    <div className="">
-                                        <p className="font-semibold text-sm text-slate-700">Appearance</p>
-                                        <p className="text-sm text-slate-500">Customize your dashboard experience</p>
-                                    </div>
-                                </div>
-                                <Button label="Customize" type="button" variant="secondary" icon={<IconPencil size={18} />} />
+                                <Button label="Delete" type="button" variant="secondary-red" icon={<IconTrash size={18} />} />
                             </div>
                         </div>
                     </div>
@@ -137,7 +140,7 @@ export default function UserSettingsPage() {
                             </header>
 
                             <div className="flex flex-col divide-y divide-slate-200">
-                                <button type="button" className="flex items-center justify-between gap-4 py-3 first:pt-0 text-left hover:opacity-80 transition-opacity">
+                                <button type="button" className="flex items-center justify-between gap-4 py-3 cursor-pointer first:pt-0 text-left hover:opacity-80 transition-opacity">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-sm bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
                                             <IconDownload size={20} />
@@ -150,7 +153,7 @@ export default function UserSettingsPage() {
                                     <IconChevronRight size={18} className="text-slate-400 shrink-0" />
                                 </button>
 
-                                <button type="button" className="flex items-center justify-between gap-4 py-3 text-left hover:opacity-80 transition-opacity">
+                                <button type="button" className="flex items-center justify-between gap-4 py-3 cursor-pointer text-left hover:opacity-80 transition-opacity">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-sm bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
                                             <IconHistory size={20} />
@@ -163,7 +166,7 @@ export default function UserSettingsPage() {
                                     <IconChevronRight size={18} className="text-slate-400 shrink-0" />
                                 </button>
 
-                                <button type="button" className="flex items-center justify-between gap-4 py-3 last:pb-0 text-left hover:opacity-80 transition-opacity">
+                                <button type="button" className="flex items-center justify-between gap-4 py-3 cursor-pointer last:pb-0 text-left hover:opacity-80 transition-opacity">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-sm bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
                                             <IconHelpCircle size={20} />
@@ -175,20 +178,6 @@ export default function UserSettingsPage() {
                                     </div>
                                     <IconChevronRight size={18} className="text-slate-400 shrink-0" />
                                 </button>
-                            </div>
-                        </div>
-
-                        <div className="w-full bg-white rounded-sm shadow-sm border border-red-200 px-5 py-3 flex flex-col gap-4">
-                            <header className="border-b border-red-200">
-                                <h1 className="font-semibold text-red-600 text-lg">Danger Zone</h1>
-                            </header>
-
-                            <div className="flex items-center justify-between gap-4">
-                                <div className="">
-                                    <p className="font-semibold text-sm text-slate-700">Delete Account</p>
-                                    <p className="text-sm text-slate-500">Permanently delete your account and all associated data.</p>
-                                </div>
-                                <Button label="Delete" type="button" variant="secondary-red" icon={<IconTrash size={18} />} />
                             </div>
                         </div>
                     </div>
